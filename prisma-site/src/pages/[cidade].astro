@@ -1,0 +1,51 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import CardProduto from '../components/CardProduto.astro';
+import BotaoWhatsApp from '../components/BotaoWhatsApp.astro';
+
+export async function getStaticPaths() {
+  const cidades = await getCollection('cidades', ({ data }) => data.ativa);
+  return cidades.map((cidade) => ({
+    params: { cidade: cidade.id },
+    props: { cidade },
+  }));
+}
+
+const { cidade } = Astro.props;
+const { Content } = await render(cidade);
+
+const produtosDestaque = (await getCollection('produtos'))
+  .filter((produto) => produto.data.destaque)
+  .sort((a, b) => a.data.ordem - b.data.ordem);
+
+const mensagem = `Olá! Sou de ${cidade.data.nome} e gostaria de um orçamento de equipamentos para cozinha.`;
+---
+
+<Layout title={cidade.data.metaTitle} description={cidade.data.metaDescription}>
+  <div class="p-4 max-w-5xl mx-auto">
+    <h1 class="text-2xl font-bold">
+      Equipamentos para cozinha profissional em {cidade.data.nome}
+    </h1>
+
+    <p class="mt-2"><strong>Prazo de entrega:</strong> {cidade.data.prazoEntrega}</p>
+
+    <h2 class="font-bold mt-4">Segmentos atendidos</h2>
+    <ul class="list-disc list-inside">
+      {cidade.data.segmentosFortes.map((segmento) => <li>{segmento}</li>)}
+    </ul>
+
+    <div class="mt-4">
+      <Content />
+    </div>
+
+    <h2 class="font-bold mt-6">Produtos em destaque</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+      {produtosDestaque.map((produto) => <CardProduto produto={produto} />)}
+    </div>
+
+    <div class="mt-6">
+      <BotaoWhatsApp mensagem={mensagem} texto="Pedir orçamento" />
+    </div>
+  </div>
+</Layout>

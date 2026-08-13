@@ -1,0 +1,55 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import BotaoWhatsApp from '../../components/BotaoWhatsApp.astro';
+
+export async function getStaticPaths() {
+  const produtos = await getCollection('produtos');
+  return produtos.map((produto) => ({
+    params: { produto: produto.id },
+    props: { produto },
+  }));
+}
+
+const { produto } = Astro.props;
+const { nome, imagem, specs, aplicacao, categoria } = produto.data;
+const { Content } = await render(produto);
+
+const categoriaEntry = await getEntry('categorias', categoria);
+
+const mensagem = `Olá! Vi a ${nome} no site e queria consultar o preço.`;
+---
+
+<Layout
+  title={`${nome} | Prisma Equipamentos`}
+  description={aplicacao}
+>
+  <div class="p-4 max-w-3xl mx-auto">
+    <Image src={imagem} alt={nome} width={800} height={600} class="w-full h-auto" />
+
+    <h1 class="text-2xl font-bold mt-4">{nome}</h1>
+
+    {categoriaEntry && (
+      <p class="mt-1">
+        Categoria: <a href={`/categoria/${categoriaEntry.id}`}>{categoriaEntry.data.nome}</a>
+      </p>
+    )}
+
+    <h2 class="font-bold mt-4">Especificações</h2>
+    <ul class="list-disc list-inside">
+      {specs.map((spec) => <li>{spec}</li>)}
+    </ul>
+
+    <h2 class="font-bold mt-4">Aplicação</h2>
+    <p>{aplicacao}</p>
+
+    <div class="mt-4">
+      <Content />
+    </div>
+
+    <div class="mt-6">
+      <BotaoWhatsApp mensagem={mensagem} />
+    </div>
+  </div>
+</Layout>

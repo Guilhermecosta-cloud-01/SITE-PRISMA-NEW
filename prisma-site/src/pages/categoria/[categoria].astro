@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import CardProduto from '../../components/CardProduto.astro';
+
+export async function getStaticPaths() {
+  const categorias = await getCollection('categorias');
+  return categorias.map((categoria) => ({
+    params: { categoria: categoria.id },
+    props: { categoria },
+  }));
+}
+
+const { categoria } = Astro.props;
+const { nome, descricao } = categoria.data;
+
+const produtos = (await getCollection('produtos'))
+  .filter((produto) => produto.data.categoria === categoria.id)
+  .sort((a, b) => a.data.ordem - b.data.ordem);
+---
+
+<Layout title={`${nome} | Prisma Equipamentos`} description={descricao}>
+  <div class="p-4 max-w-5xl mx-auto">
+    <h1 class="text-2xl font-bold">{nome}</h1>
+    <p class="mt-2">{descricao}</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+      {produtos.map((produto) => <CardProduto produto={produto} />)}
+    </div>
+  </div>
+</Layout>

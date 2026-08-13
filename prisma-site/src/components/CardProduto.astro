@@ -1,0 +1,34 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { linkWhatsApp } from '../lib/whatsapp';
+
+interface Props {
+  produto: CollectionEntry<'produtos'>;
+}
+
+const { produto } = Astro.props;
+const { nome, imagem, specs } = produto.data;
+
+const mensagem = `Olá! Vi a ${nome} no site e queria consultar o preço.`;
+---
+
+<article class="border border-gray-300 p-3 flex flex-col gap-2">
+  <a href={`/produto/${produto.id}`}>
+    <Image src={imagem} alt={nome} width={400} height={300} class="w-full h-auto" />
+  </a>
+  <h3 class="font-bold">
+    <a href={`/produto/${produto.id}`}>{nome}</a>
+  </h3>
+  <ul class="text-sm list-disc list-inside">
+    {specs.slice(0, 3).map((spec) => <li>{spec}</li>)}
+  </ul>
+  <a
+    href={linkWhatsApp(mensagem)}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="inline-block bg-green-600 text-white px-3 py-2 rounded text-center mt-auto"
+  >
+    Consultar preço
+  </a>
+</article>

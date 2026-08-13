@@ -1,11 +1,82 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import CardProduto from '../components/CardProduto.astro';
+import BotaoWhatsApp from '../components/BotaoWhatsApp.astro';
+
+const categorias = (await getCollection('categorias')).sort((a, b) => a.data.ordem - b.data.ordem);
+
+const produtosDestaque = (await getCollection('produtos'))
+  .filter((produto) => produto.data.destaque)
+  .sort((a, b) => a.data.ordem - b.data.ordem);
+
+const cidades = (await getCollection('cidades'))
+  .filter((cidade) => cidade.data.ativa)
+  .sort((a, b) => a.data.nome.localeCompare(b.data.nome));
+
+const mensagemHero = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.';
+const mensagemFinal = 'Olá! Vi o site da Prisma Equipamentos e gostaria de um orçamento.';
 ---
 
 <Layout
   title="Prisma Equipamentos — Soluções Integradas para Gastronomia"
   description="Representante autorizado Tramontina Hospitality no interior de São Paulo. Utensílios e equipamentos profissionais para restaurantes, bares, hotéis e cozinhas industriais."
 >
-  <h1 class="text-2xl font-bold p-4">Prisma Equipamentos</h1>
-  <p class="p-4">Projeto em construção.</p>
+  <section class="p-4 max-w-5xl mx-auto text-center">
+    <h1 class="text-2xl font-bold">Prisma Equipamentos — Soluções Integradas para Gastronomia</h1>
+    <p class="mt-2">
+      Representante autorizado Tramontina Hospitality no interior de São Paulo. Utensílios e
+      equipamentos profissionais para restaurantes, bares, hotéis, resorts, padarias e cozinhas
+      industriais.
+    </p>
+    <div class="mt-4">
+      <BotaoWhatsApp mensagem={mensagemHero} texto="Falar no WhatsApp" />
+    </div>
+  </section>
+
+  <section class="p-4 max-w-5xl mx-auto">
+    <h2 class="text-xl font-bold">Categorias</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+      {categorias.map((categoria) => (
+        <a href={`/categoria/${categoria.id}`} class="border border-gray-300 p-4 block">
+          <h3 class="font-bold">{categoria.data.nome}</h3>
+          <p class="text-sm mt-1">{categoria.data.descricao}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="p-4 max-w-5xl mx-auto">
+    <h2 class="text-xl font-bold">Como funciona</h2>
+    <ol class="mt-4 space-y-2 list-decimal list-inside">
+      <li>Você navega pelo catálogo e escolhe os equipamentos de interesse.</li>
+      <li>Chama no WhatsApp para consultar preço, prazo e condições.</li>
+      <li>Fechamos o pedido diretamente com a Prisma Equipamentos, sem intermediários.</li>
+    </ol>
+  </section>
+
+  <section class="p-4 max-w-5xl mx-auto">
+    <h2 class="text-xl font-bold">Produtos em destaque</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+      {produtosDestaque.map((produto) => <CardProduto produto={produto} />)}
+    </div>
+  </section>
+
+  <section class="p-4 max-w-5xl mx-auto">
+    <h2 class="text-xl font-bold">Cidades atendidas</h2>
+    <ul class="mt-4 list-disc list-inside">
+      {cidades.map((cidade) => (
+        <li>
+          <a href={`/${cidade.id}`}>{cidade.data.nome} - {cidade.data.estado}</a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="p-4 max-w-5xl mx-auto text-center">
+    <h2 class="text-xl font-bold">Pronto para equipar sua cozinha?</h2>
+    <div class="mt-4">
+      <BotaoWhatsApp mensagem={mensagemFinal} texto="Falar com a Prisma Equipamentos" />
+    </div>
+  </section>
 </Layout>

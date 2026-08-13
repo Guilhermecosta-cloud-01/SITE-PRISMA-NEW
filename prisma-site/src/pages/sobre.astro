@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BotaoWhatsApp from '../components/BotaoWhatsApp.astro';
+
+const mensagem = 'Olá! Vi a página Sobre no site e queria saber mais sobre a Prisma Equipamentos.';
+---
+
+<Layout
+  title="Sobre | Prisma Equipamentos"
+  description="Conheça a Prisma Equipamentos, representante autorizado Tramontina Hospitality no interior de São Paulo."
+>
+  <div class="p-4 max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold">Sobre a Prisma Equipamentos</h1>
+
+    <!-- EXEMPLO — substituir por conteúdo real -->
+
+    <h2 class="font-bold mt-4">Quem somos</h2>
+    <p>TODO: história real da Prisma Equipamentos.</p>
+
+    <h2 class="font-bold mt-4">Representação Tramontina Hospitality</h2>
+    <p>TODO: texto real sobre a representação autorizada e a região de atuação.</p>
+
+    <h2 class="font-bold mt-4">Segmentos atendidos</h2>
+    <p>TODO: lista real de segmentos (restaurantes, bares, hotéis, resorts, padarias, cozinhas industriais).</p>
+
+    <h2 class="font-bold mt-4">Contato</h2>
+    <p>TODO: informações reais de contato, endereço e horário de atendimento.</p>
+
+    <div class="mt-6">
+      <BotaoWhatsApp mensagem={mensagem} texto="Falar no WhatsApp" />
+    </div>
+  </div>
+</Layout>

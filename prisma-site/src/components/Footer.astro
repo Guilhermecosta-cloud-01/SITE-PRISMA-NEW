@@ -1,0 +1,19 @@
+---
+import { linkWhatsApp } from '../lib/whatsapp';
+
+const mensagem = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.';
+---
+
+<footer class="border-t border-gray-300 p-4 mt-8 text-sm">
+  <div class="max-w-5xl mx-auto space-y-2">
+    <p class="font-bold">Prisma Equipamentos</p>
+    <p>Representante autorizado Tramontina Hospitality — Soluções Integradas para Gastronomia</p>
+    <p>
+      <a href={linkWhatsApp(mensagem)} target="_blank" rel="noopener noreferrer">
+        WhatsApp: (19) 99261-6207
+      </a>
+    </p>
+    <p>TODO: endereço / região de atendimento real</p>
+    <p><a href="/privacidade">Política de Privacidade</a></p>
+  </div>
+</footer>

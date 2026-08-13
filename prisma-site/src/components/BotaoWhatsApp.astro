@@ -1,0 +1,20 @@
+---
+import { linkWhatsApp } from '../lib/whatsapp';
+
+interface Props {
+  mensagem: string;
+  texto?: string;
+  class?: string;
+}
+
+const { mensagem, texto = 'Consultar preço', class: className = '' } = Astro.props;
+---
+
+<a
+  href={linkWhatsApp(mensagem)}
+  target="_blank"
+  rel="noopener noreferrer"
+  class={`inline-block bg-green-600 text-white px-4 py-2 rounded ${className}`}
+>
+  {texto}
+</a>

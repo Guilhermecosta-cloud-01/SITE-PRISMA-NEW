@@ -1,0 +1,10 @@
+---
+nome: "Cutelaria Profissional"
+descricao: "Facas, chairas e utensílios de corte para cozinhas profissionais."
+imagem: "../../assets/categoria-cutelaria.svg"
+ordem: 1
+---
+
+<!-- EXEMPLO — substituir por conteúdo real -->
+
+TODO: texto real sobre a linha de cutelaria Tramontina trabalhada pela Prisma Equipamentos.

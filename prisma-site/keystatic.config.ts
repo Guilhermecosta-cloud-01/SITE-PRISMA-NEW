@@ -12,18 +12,27 @@ export default config({
       format: { contentField: 'content' },
       schema: {
         nome: fields.slug({ name: { label: 'Nome' } }),
-        categoria: fields.text({ label: 'Categoria' }),
+        categoria: fields.text({
+          label: 'Categoria',
+          description: 'Deve ser exatamente o identificador de uma categoria existente',
+          validation: { isRequired: true },
+        }),
         codigo: fields.text({ label: 'Código', description: 'Opcional' }),
         imagem: fields.image({
           label: 'Imagem',
           directory: 'src/assets',
           publicPath: '../../assets/',
+          validation: { isRequired: true },
         }),
         specs: fields.array(fields.text({ label: 'Especificação' }), {
           label: 'Especificações',
           itemLabel: (props) => props.value || 'Especificação',
         }),
-        aplicacao: fields.text({ label: 'Aplicação', multiline: true }),
+        aplicacao: fields.text({
+          label: 'Aplicação',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
         destaque: fields.checkbox({ label: 'Destaque', defaultValue: false }),
         ordem: fields.number({ label: 'Ordem', defaultValue: 99 }),
         content: fields.markdoc({ label: 'Conteúdo' }),
@@ -36,7 +45,11 @@ export default config({
       format: { contentField: 'content' },
       schema: {
         nome: fields.slug({ name: { label: 'Nome' } }),
-        descricao: fields.text({ label: 'Descrição', multiline: true }),
+        descricao: fields.text({
+          label: 'Descrição',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
         imagem: fields.image({
           label: 'Imagem',
           directory: 'src/assets',
@@ -54,14 +67,24 @@ export default config({
       schema: {
         nome: fields.slug({ name: { label: 'Nome' } }),
         estado: fields.text({ label: 'Estado', defaultValue: 'SP' }),
-        metaTitle: fields.text({ label: 'Meta título' }),
-        metaDescription: fields.text({ label: 'Meta descrição', multiline: true }),
+        metaTitle: fields.text({ label: 'Meta título', validation: { isRequired: true } }),
+        metaDescription: fields.text({
+          label: 'Meta descrição',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
         segmentosFortes: fields.array(fields.text({ label: 'Segmento' }), {
           label: 'Segmentos fortes',
           itemLabel: (props) => props.value || 'Segmento',
         }),
-        prazoEntrega: fields.text({ label: 'Prazo de entrega' }),
-        referenciaLocal: fields.text({ label: 'Referência local' }),
+        prazoEntrega: fields.text({
+          label: 'Prazo de entrega',
+          validation: { isRequired: true },
+        }),
+        referenciaLocal: fields.text({
+          label: 'Referência local',
+          validation: { isRequired: true },
+        }),
         ativa: fields.checkbox({ label: 'Ativa', defaultValue: true }),
         content: fields.markdoc({ label: 'Conteúdo' }),
       },

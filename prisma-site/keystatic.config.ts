@@ -1,8 +1,44 @@
-import { config, fields, collection } from '@keystatic/core';
+import { config, fields, collection, singleton } from '@keystatic/core';
 
 export default config({
   storage: {
     kind: 'local',
+  },
+  singletons: {
+    aparencia: singleton({
+      label: 'Aparência do site',
+      path: 'src/content/aparencia/aparencia',
+      format: 'json',
+      schema: {
+        corDestaque: fields.text({
+          label: 'Cor de destaque (botões e links)',
+          description: 'Código hex, ex: #16a34a',
+          defaultValue: '#16a34a',
+          validation: { isRequired: true, length: { min: 4, max: 9 } },
+        }),
+        heroTitulo: fields.text({
+          label: 'Título do hero (home)',
+          validation: { isRequired: true },
+        }),
+        heroTexto: fields.text({
+          label: 'Texto do hero (home)',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        mostrarComoFunciona: fields.checkbox({
+          label: 'Mostrar seção "Como funciona" na home',
+          defaultValue: true,
+        }),
+        mostrarCidades: fields.checkbox({
+          label: 'Mostrar seção "Cidades atendidas" na home',
+          defaultValue: true,
+        }),
+        textoRodapeExtra: fields.text({
+          label: 'Linha extra no rodapé',
+          description: 'Opcional — ex. endereço, horário de atendimento',
+        }),
+      },
+    }),
   },
   collections: {
     produtos: collection({

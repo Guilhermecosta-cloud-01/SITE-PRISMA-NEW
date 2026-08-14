@@ -1,5 +1,6 @@
 ---
 import { linkWhatsApp } from '../lib/whatsapp';
+import { aparencia } from '../lib/aparencia';
 
 const mensagem = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.';
 ---
@@ -13,7 +14,7 @@ const mensagem = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.
         WhatsApp: (19) 99261-6207
       </a>
     </p>
-    <p>TODO: endereço / região de atendimento real</p>
+    <p>{aparencia.textoRodapeExtra || 'TODO: endereço / região de atendimento real'}</p>
     <p><a href="/privacidade">Política de Privacidade</a></p>
   </div>
 </footer>

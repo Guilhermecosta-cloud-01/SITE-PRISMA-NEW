@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFlutuante from '../components/WhatsAppFlutuante.astro';
+import { aparencia } from '../lib/aparencia';
 import '../styles/global.css';
 
 interface Props {
@@ -31,7 +32,7 @@ const localBusinessJsonLd = {
 ---
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" style={`--color-accent: ${aparencia.corDestaque}`}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

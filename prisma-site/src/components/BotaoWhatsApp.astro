@@ -14,7 +14,7 @@ const { mensagem, texto = 'Consultar preço', class: className = '' } = Astro.pr
   href={linkWhatsApp(mensagem)}
   target="_blank"
   rel="noopener noreferrer"
-  class={`inline-block bg-green-600 text-white px-4 py-2 rounded ${className}`}
+  class={`inline-block bg-[var(--color-accent)] text-white px-4 py-2 rounded ${className}`}
 >
   {texto}
 </a>

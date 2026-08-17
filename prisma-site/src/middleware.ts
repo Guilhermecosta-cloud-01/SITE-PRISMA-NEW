@@ -23,5 +23,31 @@ export const onRequest = defineMiddleware(async (context, next) => {
       // Workers) — segue sem o shim, o que é inofensivo fora de produção.
     }
   }
+
+  // Segundo bug do mesmo pacote: o handler de login do Keystatic
+  // (githubLogin, em @keystatic/core) monta a URL de autorização do GitHub
+  // sem parâmetro `scope` nenhum — o token resultante não tem nenhuma
+  // permissão, nem de leitura em repo público. Isso quebra qualquer
+  // gravação (createCommitOnBranch exige, no mínimo, o escopo
+  // 'public_repo'). Workaround: intercepta o redirect dessa rota
+  // específica e injeta o scope antes de mandar pro navegador.
+  if (pathname === '/api/keystatic/github/login') {
+    const response = await next();
+    const location = response.headers.get('Location');
+    if (
+      response.status >= 300 &&
+      response.status < 400 &&
+      location?.startsWith('https://github.com/login/oauth/authorize') &&
+      !new URL(location).searchParams.has('scope')
+    ) {
+      const novaLocation = new URL(location);
+      novaLocation.searchParams.set('scope', 'public_repo');
+      const headers = new Headers(response.headers);
+      headers.set('Location', novaLocation.toString());
+      return new Response(response.body, { status: response.status, headers });
+    }
+    return response;
+  }
+
   return next();
 });

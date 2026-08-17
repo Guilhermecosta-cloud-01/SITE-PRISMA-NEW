@@ -1,9 +1,17 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 
+// Em dev local (ex.: Codespaces), o Keystatic grava direto no disco e você
+// mesmo dá commit/push. Em produção (site publicado em /keystatic), não há
+// checkout de git gravável — o painel autentica com GitHub e grava via API,
+// exigindo as variáveis de ambiente KEYSTATIC_GITHUB_CLIENT_ID,
+// KEYSTATIC_GITHUB_CLIENT_SECRET e KEYSTATIC_SECRET (ver CLAUDE.md).
+const storage: import('@keystatic/core').Config['storage'] =
+  process.env.NODE_ENV === 'production'
+    ? { kind: 'github', repo: 'guilhermecosta-cloud-01/site-prisma-new' }
+    : { kind: 'local' };
+
 export default config({
-  storage: {
-    kind: 'local',
-  },
+  storage,
   singletons: {
     aparencia: singleton({
       label: 'Aparência do site',

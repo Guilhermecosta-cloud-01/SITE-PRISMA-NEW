@@ -12,9 +12,14 @@ caminho termina numa conversa no WhatsApp.
   (paleta/tipografia/logo — ver seção "Identidade visual" abaixo)
 - **Markdoc** (`@astrojs/markdoc`) — formato do corpo das entradas de conteúdo (`.mdoc`),
   exigido pelo campo de conteúdo do Keystatic
-- **Keystatic** em modo local (`storage: { kind: 'local' }`) como painel de edição —
-  roda só em desenvolvimento, nunca no build de produção
-- **Cloudflare Pages** (via Workers Builds/`wrangler.jsonc`) como destino do deploy
+- **Keystatic** como painel de edição, em `/keystatic` — em dev local grava direto no
+  disco (`storage: local`); no site publicado autentica com GitHub e grava via API
+  (`storage: github`). Ver seção "Painel /keystatic no site publicado".
+- **@astrojs/cloudflare** — adapter necessário só por causa das rotas do Keystatic
+  (`/keystatic`, `/api/keystatic`), que a integration registra como `prerender: false`.
+  Todas as páginas de conteúdo continuam 100% estáticas (prerenderizadas) — o adapter
+  não muda isso, só habilita essas duas rotas específicas.
+- **Cloudflare Workers** (via Workers Builds/`wrangler.jsonc`) como destino do deploy
 
 Não adicione dependências fora dessa stack (nada de UI kit, animação, ORM, state
 manager) sem alinhar antes.
@@ -73,7 +78,7 @@ em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.
   do wordmark "PRISMA / Equipamentos" tipografado (não é imagem). Componente:
   `src/components/Logo.astro` (props `iconSize`, `textSize`, `showTagline`).
 
-## Como rodar o Keystatic
+## Como rodar o Keystatic localmente
 
 ```bash
 cd prisma-site
@@ -81,9 +86,49 @@ npm install
 npm run dev
 ```
 
-Acesse `http://localhost:4321/keystatic`. O painel só existe em desenvolvimento — em
-`astro.config.mjs`, as integrations `react()` e `keystatic()` só são registradas quando
-`NODE_ENV !== 'production'`, então `npm run build` nunca gera a rota `/keystatic`.
+Acesse `http://localhost:4321/keystatic`. Em dev, `keystatic.config.ts` usa
+`storage: { kind: 'local' }` — o painel grava direto nos arquivos do checkout; você
+mesmo dá `git add`/`commit`/`push` depois (pelo Codespaces ou pela sua máquina).
+
+## Painel /keystatic no site publicado
+
+O mesmo painel também fica disponível em produção, em
+`https://site-prisma-new.representante-guilhermecosta.workers.dev/keystatic` (ou no
+domínio próprio, quando estiver apontado). Como não há checkout de git gravável num
+Worker do Cloudflare, `keystatic.config.ts` troca automaticamente para
+`storage: { kind: 'github', repo: 'guilhermecosta-cloud-01/site-prisma-new' }` quando
+`NODE_ENV === 'production'` — o painel autentica com uma conta GitHub e grava direto no
+repositório via API (cada alteração vira um commit na branch configurada).
+
+**Configuração única (só precisa ser feita uma vez, fora do código):**
+
+1. No GitHub, vá em **Settings → Developer settings → OAuth Apps → New OAuth App**
+   (https://github.com/settings/developers).
+2. Preencha:
+   - **Application name**: `Prisma Equipamentos — Keystatic`
+   - **Homepage URL**: `https://site-prisma-new.representante-guilhermecosta.workers.dev`
+   - **Authorization callback URL**:
+     `https://site-prisma-new.representante-guilhermecosta.workers.dev/api/keystatic/github/oauth/callback`
+     (se depois configurar o domínio próprio, crie um segundo OAuth App com a mesma
+     callback no domínio novo, ou atualize este — a callback URL precisa bater
+     exatamente com o domínio que o visitante usa).
+3. Clique em **Register application**. Copie o **Client ID** mostrado na tela.
+4. Clique em **Generate a new client secret** e copie o valor (só aparece uma vez).
+5. No painel do Cloudflare, vá nas configurações do Worker/projeto →
+   **Settings → Variables and Secrets** e adicione três segredos (tipo **Secret**, não
+   texto puro):
+   - `KEYSTATIC_GITHUB_CLIENT_ID` → o Client ID do passo 3
+   - `KEYSTATIC_GITHUB_CLIENT_SECRET` → o Client Secret do passo 4
+   - `KEYSTATIC_SECRET` → uma string aleatória só pra esse fim (não é do GitHub — é a
+     chave que o Keystatic usa pra assinar a sessão de quem loga). Sugestão gerada:
+     `Z0Z_GJjlmq0DdOpxQGxxhRI9906Dez7mNojshtEC9Gg` — pode usar essa ou gerar outra.
+6. Salve e dispare um novo deploy (as env vars só valem a partir do próximo build).
+
+⚠️ Só quem tem acesso de **escrita** no repositório GitHub consegue de fato salvar uma
+alteração pelo painel publicado — qualquer pessoa pode tentar logar com sua própria
+conta GitHub, mas a gravação (chamada à API do GitHub) falha para quem não é
+colaborador do repo. Ainda assim, a existência da rota `/keystatic` é pública; não é
+uma área "escondida".
 
 ## Como adicionar uma cidade
 
@@ -134,7 +179,10 @@ tipografia, etc.), ainda é preciso editar o código.
 - **Nenhum preço em lugar nenhum.** O botão de produto sempre diz "Consultar preço".
 - **Todo CTA é um link `wa.me`** (`src/lib/whatsapp.ts`) com mensagem pré-preenchida e
   contextual — nunca um botão genérico sem contexto.
-- **Site publicado é 100% estático.** Keystatic só roda em desenvolvimento local.
+- **Todo o conteúdo do site é estático/prerenderizado.** A única exceção é o painel
+  `/keystatic` em si (e sua API em `/api/keystatic`), que precisa ser uma rota sob
+  demanda para autenticar e gravar no GitHub — nenhuma página de produto, categoria,
+  cidade etc. deixa de ser estática por causa disso.
 - **Mobile-first.**
 - **A identidade visual é a do design importado** (ver seção "Identidade visual") — não
   troque paleta, tipografia ou logo por conta própria; para uma mudança de layout maior

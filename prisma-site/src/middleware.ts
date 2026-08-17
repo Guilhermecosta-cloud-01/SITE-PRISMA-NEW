@@ -5,7 +5,7 @@ import { defineMiddleware } from 'astro:middleware';
 // @astrojs/cloudflare 14.x removeu esse acesso de propósito — `.env` agora
 // lança erro, orientando a usar `import { env } from 'cloudflare:workers'`.
 // Isso quebra o login do GitHub no Keystatic (rota /api/keystatic/github/*)
-// até o Keystatic ser atualizado rio acima. Como workaround: nas rotas do
+// até o Keystatic ser atualizado upstream. Como workaround: nas rotas do
 // Keystatic, redefinimos só o getter `env` (os outros — cf/caches/ctx — o
 // Keystatic não usa) apontando pro valor real, lido do jeito atual.
 export const onRequest = defineMiddleware(async (context, next) => {

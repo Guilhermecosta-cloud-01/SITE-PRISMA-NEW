@@ -130,6 +130,14 @@ conta GitHub, mas a gravação (chamada à API do GitHub) falha para quem não �
 colaborador do repo. Ainda assim, a existência da rota `/keystatic` é pública; não é
 uma área "escondida".
 
+⚠️ **`src/middleware.ts` existe por causa de um bug de desatualização do
+`@keystatic/astro`** (a versão mais recente disponível, 5.2.0, ainda lê
+`Astro.locals.runtime.env` — API removida de propósito pelo `@astrojs/cloudflare` 14.x,
+a única faixa compatível com Astro 7). Sem esse middleware, o login do GitHub no
+Keystatic dá 500. Não remova esse arquivo sem checar se uma versão nova do
+`@keystatic/astro` já corrigiu isso upstream (aí o middleware vira desnecessário, mas
+inofensivo de manter).
+
 ## Como adicionar uma cidade
 
 ⚠️ Só crie página de cidade com conteúdo único e real. Página de cidade "vazia" ou

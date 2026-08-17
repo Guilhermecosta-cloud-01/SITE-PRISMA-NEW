@@ -114,15 +114,29 @@ repositório via API (cada alteração vira um commit na branch configurada).
      exatamente com o domínio que o visitante usa).
 3. Clique em **Register application**. Copie o **Client ID** mostrado na tela.
 4. Clique em **Generate a new client secret** e copie o valor (só aparece uma vez).
-5. No painel do Cloudflare, vá nas configurações do Worker/projeto →
-   **Settings → Variables and Secrets** e adicione três segredos (tipo **Secret**, não
-   texto puro):
-   - `KEYSTATIC_GITHUB_CLIENT_ID` → o Client ID do passo 3
-   - `KEYSTATIC_GITHUB_CLIENT_SECRET` → o Client Secret do passo 4
-   - `KEYSTATIC_SECRET` → uma string aleatória só pra esse fim (não é do GitHub — é a
-     chave que o Keystatic usa pra assinar a sessão de quem loga). Sugestão gerada:
-     `Z0Z_GJjlmq0DdOpxQGxxhRI9906Dez7mNojshtEC9Gg` — pode usar essa ou gerar outra.
-6. Salve e dispare um novo deploy (as env vars só valem a partir do próximo build).
+5. Defina os três segredos no Worker publicado — o jeito mais confiável é pelo terminal
+   (o painel do Cloudflare já se mostrou instável pra isso neste projeto: variáveis
+   adicionadas pela aba Settings não sobreviveram a um deploy seguinte). No Codespace,
+   dentro de `prisma-site`:
+   ```bash
+   npx wrangler secret put KEYSTATIC_GITHUB_CLIENT_ID
+   npx wrangler secret put KEYSTATIC_GITHUB_CLIENT_SECRET
+   npx wrangler secret put KEYSTATIC_SECRET
+   ```
+   Cada comando pede pra colar o valor correspondente. `KEYSTATIC_SECRET` não vem do
+   GitHub — é uma string aleatória só pra essa finalidade (o Keystatic usa pra assinar a
+   sessão de quem loga); gere a sua, ex. `openssl rand -base64 32`, e **nunca** deixe o
+   valor real escrito num arquivo do repositório (isso já aconteceu uma vez neste
+   projeto — o valor vazado foi rotacionado, mas fica de lição).
+6. `wrangler secret put` já aplica o segredo no Worker publicado, sem precisar de outro
+   deploy.
+
+⚠️ **Repositório precisa ser público.** No modo `storage: { kind: 'github' }` com OAuth
+App simples (o que está configurado), o Keystatic não pede nenhum escopo de permissão
+no login — então só enxerga repositórios **públicos**. Foi a escolha deliberada aqui
+(mais simples que configurar um GitHub App com instalação por repositório, que seria a
+alternativa pra manter o repo privado). Nada no repositório é sensível — segredos reais
+(Client Secret do GitHub, tokens) nunca ficam em arquivo, só como variável no Cloudflare.
 
 ⚠️ Só quem tem acesso de **escrita** no repositório GitHub consegue de fato salvar uma
 alteração pelo painel publicado — qualquer pessoa pode tentar logar com sua própria

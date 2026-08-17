@@ -12,8 +12,8 @@ export default config({
       schema: {
         corDestaque: fields.text({
           label: 'Cor de destaque (botões e links)',
-          description: 'Código hex, ex: #16a34a',
-          defaultValue: '#16a34a',
+          description: 'Código hex, ex: #D4703A',
+          defaultValue: '#D4703A',
           validation: { isRequired: true, length: { min: 4, max: 9 } },
         }),
         heroTitulo: fields.text({
@@ -25,8 +25,8 @@ export default config({
           multiline: true,
           validation: { isRequired: true },
         }),
-        mostrarComoFunciona: fields.checkbox({
-          label: 'Mostrar seção "Como funciona" na home',
+        mostrarPorQueAPrisma: fields.checkbox({
+          label: 'Mostrar seção "Por que a Prisma" na home',
           defaultValue: true,
         }),
         mostrarCidades: fields.checkbox({

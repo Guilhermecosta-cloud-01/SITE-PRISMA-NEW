@@ -1,8 +1,8 @@
 {
-  "corDestaque": "#16a34a",
-  "heroTitulo": "Prisma Equipamentos — Soluções Integradas para Gastronomia",
-  "heroTexto": "Representante autorizado Tramontina Hospitality no interior de São Paulo. Utensílios e equipamentos profissionais para restaurantes, bares, hotéis, resorts, padarias e cozinhas industriais.",
-  "mostrarComoFunciona": true,
+  "corDestaque": "#D4703A",
+  "heroTitulo": "Sua cozinha equipada por quem entende de operação, não só de catálogo.",
+  "heroTexto": "Cutelaria, panelas, indução, buffet e utensílios profissionais para restaurantes, hotéis e resorts do interior paulista. Orçamento no WhatsApp, entrega na sua cozinha.",
+  "mostrarPorQueAPrisma": true,
   "mostrarCidades": true,
   "textoRodapeExtra": ""
 }

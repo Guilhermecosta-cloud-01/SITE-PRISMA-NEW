@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import { linkWhatsApp } from '../lib/whatsapp';
+import BotaoWhatsApp from './BotaoWhatsApp.astro';
 
 interface Props {
   produto: CollectionEntry<'produtos'>;
@@ -13,22 +13,17 @@ const { nome, imagem, specs } = produto.data;
 const mensagem = `Olá! Vi a ${nome} no site e queria consultar o preço.`;
 ---
 
-<article class="border border-gray-300 p-3 flex flex-col gap-2">
+<article class="flex flex-col overflow-hidden rounded-md border border-cream-border bg-white">
   <a href={`/produto/${produto.id}`}>
-    <Image src={imagem} alt={nome} width={400} height={300} class="w-full h-auto" />
+    <Image src={imagem} alt={nome} width={400} height={300} class="h-[180px] w-full object-cover" />
   </a>
-  <h3 class="font-bold">
-    <a href={`/produto/${produto.id}`}>{nome}</a>
-  </h3>
-  <ul class="text-sm list-disc list-inside">
-    {specs.slice(0, 3).map((spec) => <li>{spec}</li>)}
-  </ul>
-  <a
-    href={linkWhatsApp(mensagem)}
-    target="_blank"
-    rel="noopener noreferrer"
-    class="inline-block bg-[var(--color-accent)] text-white px-3 py-2 rounded text-center mt-auto"
-  >
-    Consultar preço
-  </a>
+  <div class="flex flex-1 flex-col gap-3 p-5">
+    <h3 class="font-sans text-[17px] font-bold text-navy-800">
+      <a href={`/produto/${produto.id}`}>{nome}</a>
+    </h3>
+    <ul class="flex flex-col gap-1 font-sans text-sm text-[#5C6B7A]">
+      {specs.slice(0, 3).map((spec) => <li>{spec}</li>)}
+    </ul>
+    <BotaoWhatsApp mensagem={mensagem} class="mt-auto w-full text-sm px-4 py-3" />
+  </div>
 </article>

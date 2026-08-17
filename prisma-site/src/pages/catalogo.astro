@@ -6,27 +6,31 @@ import CardProduto from '../components/CardProduto.astro';
 const categorias = (await getCollection('categorias')).sort((a, b) => a.data.ordem - b.data.ordem);
 const produtos = await getCollection('produtos');
 
-const categoriasComProdutos = categorias.map((categoria) => ({
-  categoria,
-  produtos: produtos
-    .filter((produto) => produto.data.categoria === categoria.id)
-    .sort((a, b) => a.data.ordem - b.data.ordem),
-}));
+const categoriasComProdutos = categorias
+  .map((categoria) => ({
+    categoria,
+    produtos: produtos
+      .filter((produto) => produto.data.categoria === categoria.id)
+      .sort((a, b) => a.data.ordem - b.data.ordem),
+  }))
+  .filter(({ produtos: produtosDaCategoria }) => produtosDaCategoria.length > 0);
 ---
 
 <Layout
   title="Catálogo | Prisma Equipamentos"
   description="Catálogo completo de utensílios e equipamentos profissionais Tramontina para gastronomia, organizado por categoria."
 >
-  <div class="p-4 max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold">Catálogo</h1>
+  <div class="mx-auto max-w-[1440px] px-5 py-10 md:px-14 md:py-16">
+    <h1 class="font-display text-[32px] leading-tight text-navy-800 md:text-[46px]">Catálogo</h1>
 
     {categoriasComProdutos.map(({ categoria, produtos: produtosDaCategoria }) => (
-      <section class="mt-8">
-        <h2 class="text-xl font-bold">
-          <a href={`/categoria/${categoria.id}`}>{categoria.data.nome}</a>
+      <section class="mt-10 md:mt-14">
+        <h2 class="font-display text-2xl text-navy-800 md:text-3xl">
+          <a href={`/categoria/${categoria.id}`} class="hover:text-[var(--color-accent)] transition-colors">
+            {categoria.data.nome}
+          </a>
         </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+        <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
           {produtosDaCategoria.map((produto) => <CardProduto produto={produto} />)}
         </div>
       </section>

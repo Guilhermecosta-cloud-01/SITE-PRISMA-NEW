@@ -8,8 +8,8 @@ caminho termina numa conversa no WhatsApp.
 
 - **Astro** (output estático) — TypeScript strict, coleções de conteúdo via **Content
   Layer** (`astro/loaders` `glob`)
-- **Tailwind v4** via `@tailwindcss/vite` (estilo mínimo, visual propositalmente feio
-  nesta entrega — sem identidade visual definida)
+- **Tailwind v4** via `@tailwindcss/vite`, com a identidade visual da Prisma
+  (paleta/tipografia/logo — ver seção "Identidade visual" abaixo)
 - **Markdoc** (`@astrojs/markdoc`) — formato do corpo das entradas de conteúdo (`.mdoc`),
   exigido pelo campo de conteúdo do Keystatic
 - **Keystatic** em modo local (`storage: { kind: 'local' }`) como painel de edição —
@@ -47,6 +47,31 @@ extensão (via a integration `@astrojs/markdoc`, registrada em `astro.config.mjs
 os arquivos de exemplo quanto o que o Keystatic grava. Nunca crie arquivo `.md` dentro de
 `src/content/*` — o Astro não vai enxergá-lo (o loader só busca `**/*.mdoc`), e o
 Keystatic também não vai reconhecê-lo como a mesma entrada ao editar.
+
+## Identidade visual
+
+Design importado do Claude Design (mockup `Prisma Equipamentos.dc.html`) e implementado
+em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.astro`.
+
+- **Cores** (tokens Tailwind via `@theme` em `global.css`):
+  `navy-900` `#132840` (rodapé), `navy-800` `#1b3556` (header/hero/seções escuras),
+  `navy-700` `#21406b` (painel do hero), `navy-600` `#4a6e92` (bordas em fundo escuro),
+  `cream` `#f7f5f2` (fundo claro / texto sobre fundo escuro), `cream-border` `#e6e0d4`
+  (borda de card em fundo claro). A cor de destaque (laranja `#D4703A` por padrão) **não**
+  é um token fixo — continua vindo do singleton "Aparência" via `--color-accent` (ver
+  seção abaixo), só que agora com o laranja da marca como valor padrão em vez do verde
+  genérico do MVP.
+- **Tipografia**: `League Gothic` (títulos grandes / wordmark, classe `font-display`),
+  `Public Sans` (texto e UI, classe `font-sans`, padrão do `body`), `IBM Plex Mono`
+  (rótulos "eyebrow" em caixa alta, classe `font-mono`). Os três `.woff2` estão
+  auto-hospedados em `public/fonts/` (baixados uma vez do Google Fonts, subset `latin` —
+  cobre a acentuação do português) e declarados via `@font-face` em `global.css`. Isso é
+  uma exceção deliberada à regra de "sem fonte externa": os arquivos vivem no repo, o
+  site publicado não faz nenhuma requisição a serviço externo de fonte em runtime.
+- **Logo**: `src/assets/logo-icon.png` é o ícone (o prisma hexagonal) recortado e com
+  fundo removido a partir do logo original enviado pelo usuário — usado sozinho, ao lado
+  do wordmark "PRISMA / Equipamentos" tipografado (não é imagem). Componente:
+  `src/components/Logo.astro` (props `iconSize`, `textSize`, `showTagline`).
 
 ## Como rodar o Keystatic
 
@@ -95,8 +120,8 @@ editar nenhum componente:
   `BotaoWhatsApp.astro`, `WhatsAppFlutuante.astro`, `CardProduto.astro`) — assim a cor
   muda no site inteiro a partir de um único campo no painel.
 - **Título e texto do hero** da home (`heroTitulo`, `heroTexto`).
-- **Mostrar/ocultar** as seções "Como funciona" e "Cidades atendidas" da home
-  (`mostrarComoFunciona`, `mostrarCidades`).
+- **Mostrar/ocultar** as seções "Por que a Prisma" e "Cidades atendidas" da home
+  (`mostrarPorQueAPrisma`, `mostrarCidades`).
 - **Linha extra do rodapé** (`textoRodapeExtra`), opcional.
 
 Isso NÃO é um builder visual (arrastar/soltar, mudar espaçamento, reordenar seções
@@ -111,10 +136,13 @@ tipografia, etc.), ainda é preciso editar o código.
   contextual — nunca um botão genérico sem contexto.
 - **Site publicado é 100% estático.** Keystatic só roda em desenvolvimento local.
 - **Mobile-first.**
-- **Sem identidade visual definida nesta entrega** — não adicione paleta, tipografia
-  elaborada ou hero complexo sem alinhar antes; o visual feio é proposital.
+- **A identidade visual é a do design importado** (ver seção "Identidade visual") — não
+  troque paleta, tipografia ou logo por conta própria; para uma mudança de layout maior
+  (nova seção, reordenar, novo componente), alinhe antes de implementar.
 - **Sem busca, filtro avançado, área de cliente, blog ou newsletter.**
 - **Sem cidades além das já cadastradas** sem pedido explícito.
-- **Sem imagens ou fontes externas** — só assets locais.
+- **Sem imagens ou fontes de serviço externo em runtime** — assets ficam no repo
+  (`src/assets/`, `public/fonts/`); fontes do Google foram baixadas uma vez e são
+  auto-hospedadas, nunca carregadas de `fonts.googleapis.com` em produção.
 - **Sem texto de marketing genérico** — onde faltar conteúdo real, use `TODO:`
   explícito no corpo/campos.

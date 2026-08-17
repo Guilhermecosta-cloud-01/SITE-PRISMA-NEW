@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import logoIcon from '../assets/logo-icon.png';
+
+interface Props {
+  iconSize?: number;
+  textSize?: number;
+  showTagline?: boolean;
+  taglineSize?: number;
+}
+
+const { iconSize = 46, textSize = 23, showTagline = true, taglineSize = 10.5 } = Astro.props;
+---
+
+<div class="flex items-center gap-2.5">
+  <Image
+    src={logoIcon}
+    alt="Prisma Equipamentos"
+    width={iconSize}
+    height={iconSize}
+    style={`width:${iconSize}px;height:${iconSize}px`}
+    class="shrink-0"
+  />
+  <div class="flex items-center gap-1.5">
+    <span
+      class="font-display text-cream leading-none tracking-wide"
+      style={`font-size:${textSize}px`}
+    >
+      PRISMA
+    </span>
+    {showTagline && (
+      <span
+        class="font-sans font-semibold uppercase text-[#9FB4C8]"
+        style={`font-size:${taglineSize}px; margin-top:3px; letter-spacing:1.3px`}
+      >
+        Equipamentos
+      </span>
+    )}
+  </div>
+</div>

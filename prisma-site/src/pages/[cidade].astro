@@ -23,28 +23,48 @@ const mensagem = `Olá! Sou de ${cidade.data.nome} e gostaria de um orçamento d
 ---
 
 <Layout title={cidade.data.metaTitle} description={cidade.data.metaDescription}>
-  <div class="p-4 max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold">
-      Equipamentos para cozinha profissional em {cidade.data.nome}
-    </h1>
+  <div class="bg-navy-800 px-5 py-10 md:px-14 md:py-14">
+    <div class="mx-auto max-w-[1440px]">
+      <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-[#8FA8C1] md:text-xs">
+        Área de atendimento
+      </p>
+      <h1 class="mt-3 font-display text-[32px] leading-tight text-cream md:text-[46px]">
+        Equipamentos para cozinha profissional em {cidade.data.nome}
+      </h1>
+      <p class="mt-3 font-sans text-[15px] text-[#B9C8D6]">
+        <strong class="text-cream">Prazo de entrega:</strong> {cidade.data.prazoEntrega}
+      </p>
+    </div>
+  </div>
 
-    <p class="mt-2"><strong>Prazo de entrega:</strong> {cidade.data.prazoEntrega}</p>
-
-    <h2 class="font-bold mt-4">Segmentos atendidos</h2>
-    <ul class="list-disc list-inside">
-      {cidade.data.segmentosFortes.map((segmento) => <li>{segmento}</li>)}
+  <div class="mx-auto max-w-[1440px] px-5 py-10 md:px-14 md:py-14">
+    <h2 class="font-mono text-xs font-semibold uppercase tracking-[1.2px] text-[#6B7F94]">
+      Segmentos atendidos
+    </h2>
+    <ul class="mt-3 flex flex-wrap gap-2">
+      {cidade.data.segmentosFortes.map((segmento) => (
+        <li class="rounded border border-cream-border bg-white px-3.5 py-1.5 font-sans text-sm text-navy-800">
+          {segmento}
+        </li>
+      ))}
     </ul>
 
-    <div class="mt-4">
+    <div class="prose mt-6 font-sans text-[15px] leading-relaxed text-[#5C6B7A]">
       <Content />
     </div>
 
-    <h2 class="font-bold mt-6">Produtos em destaque</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-      {produtosDestaque.map((produto) => <CardProduto produto={produto} />)}
-    </div>
+    {produtosDestaque.length > 0 && (
+      <>
+        <h2 class="mt-10 font-mono text-xs font-semibold uppercase tracking-[1.2px] text-[#6B7F94] md:mt-14">
+          Produtos em destaque
+        </h2>
+        <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
+          {produtosDestaque.map((produto) => <CardProduto produto={produto} />)}
+        </div>
+      </>
+    )}
 
-    <div class="mt-6">
+    <div class="mt-8">
       <BotaoWhatsApp mensagem={mensagem} texto="Pedir orçamento" />
     </div>
   </div>

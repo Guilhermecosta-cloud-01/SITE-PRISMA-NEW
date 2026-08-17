@@ -1,15 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
-import CardProduto from '../components/CardProduto.astro';
+import CardCategoria from '../components/CardCategoria.astro';
 import BotaoWhatsApp from '../components/BotaoWhatsApp.astro';
+import logoIcon from '../assets/logo-icon.png';
 import { aparencia } from '../lib/aparencia';
 
 const categorias = (await getCollection('categorias')).sort((a, b) => a.data.ordem - b.data.ordem);
-
-const produtosDestaque = (await getCollection('produtos'))
-  .filter((produto) => produto.data.destaque)
-  .sort((a, b) => a.data.ordem - b.data.ordem);
 
 const cidades = (await getCollection('cidades'))
   .filter((cidade) => cidade.data.ativa)
@@ -17,67 +15,227 @@ const cidades = (await getCollection('cidades'))
 
 const mensagemHero = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.';
 const mensagemFinal = 'Olá! Vi o site da Prisma Equipamentos e gostaria de um orçamento.';
+
+const marcadores = ['bg-navy-600', 'bg-cream-border', 'bg-[var(--color-accent)]'];
+
+const segmentos = [
+  {
+    numero: '01',
+    titulo: 'Restaurantes',
+    descricao: 'Cardápios de alto volume, cozinha de produção contínua e mesa posta para o salão.',
+  },
+  {
+    numero: '02',
+    titulo: 'Hotéis e Pousadas',
+    descricao: 'Café da manhã, room service e banquetes com equipamento para múltiplos turnos.',
+  },
+  {
+    numero: '03',
+    titulo: 'Resorts',
+    descricao: 'Estrutura para restaurante, bares e eventos dentro de um único empreendimento.',
+  },
+  {
+    numero: '04',
+    titulo: 'Buffets e Eventos',
+    descricao: 'Equipamento de buffet e transporte térmico para servir fora da cozinha fixa.',
+  },
+];
+
+const porQueAPrisma = [
+  {
+    numero: '01',
+    titulo: 'Representante autorizado Tramontina',
+    descricao: 'Linha completa de equipamentos profissionais com garantia de fábrica.',
+  },
+  {
+    numero: '02',
+    titulo: 'Atendimento no interior de SP',
+    descricao: 'Visita técnica e suporte presencial em restaurantes, hotéis e resorts da região.',
+  },
+  {
+    numero: '03',
+    titulo: 'Orçamento pelo WhatsApp',
+    descricao: 'Consultoria direta para montar ou repor sua cozinha, sem burocracia.',
+  },
+  {
+    numero: '04',
+    titulo: 'Entrega e instalação',
+    descricao: 'Equipamento entregue e pronto para operar na sua cozinha.',
+  },
+];
 ---
 
 <Layout
   title="Prisma Equipamentos — Soluções Integradas para Gastronomia"
   description="Representante autorizado Tramontina Hospitality no interior de São Paulo. Utensílios e equipamentos profissionais para restaurantes, bares, hotéis e cozinhas industriais."
 >
-  <section class="p-4 max-w-5xl mx-auto text-center">
-    <h1 class="text-2xl font-bold">{aparencia.heroTitulo}</h1>
-    <p class="mt-2">{aparencia.heroTexto}</p>
-    <div class="mt-4">
-      <BotaoWhatsApp mensagem={mensagemHero} texto="Falar no WhatsApp" />
+  <!-- HERO -->
+  <section class="bg-navy-800">
+    <div
+      class="mx-auto flex max-w-[1440px] flex-col gap-10 px-5 pb-14 pt-4 md:flex-row md:items-center md:gap-[70px] md:px-14 md:pb-16 md:pt-6"
+    >
+      <div class="flex-1 md:max-w-[600px]">
+        <p
+          class="font-mono text-[11px] font-medium uppercase tracking-[1.3px] text-[#8FA8C1] md:text-xs md:tracking-[1.6px]"
+        >
+          Representante autorizado Tramontina Food Service · Interior de SP
+        </p>
+        <h1
+          class="mt-3.5 font-display text-[35px] leading-[1.12] text-cream md:mt-5 md:text-[58px] md:leading-[1.08]"
+        >
+          {aparencia.heroTitulo}
+        </h1>
+        <p class="mt-4 font-sans text-[15px] leading-relaxed text-[#B9C8D6] md:mt-6 md:max-w-[470px] md:text-lg">
+          {aparencia.heroTexto}
+        </p>
+        <div class="mt-7 flex flex-col gap-3 md:mt-9 md:flex-row md:items-center">
+          <BotaoWhatsApp mensagem={mensagemHero} texto="Pedir orçamento no WhatsApp" class="w-full md:w-auto" />
+          <a
+            href="/catalogo"
+            class="inline-flex items-center justify-center rounded border border-navy-600 px-6 py-3.5 font-sans text-[15.5px] font-semibold text-cream transition-colors hover:border-cream hover:bg-white/5"
+          >
+            Ver catálogo
+          </a>
+        </div>
+      </div>
+
+      <div class="flex-1 md:max-w-[520px]">
+        <div class="relative overflow-hidden rounded-md border border-white/8 bg-navy-700 p-6 md:p-9">
+          <div
+            class="pointer-events-none absolute inset-0"
+            style="background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0px,rgba(255,255,255,.035) 2px,transparent 2px,transparent 26px)"
+          >
+          </div>
+          <div class="relative mb-[18px] flex items-center md:mb-[30px]">
+            <div
+              class="h-0.5 flex-1 origin-left"
+              style="background:linear-gradient(90deg,transparent,#D4703A 85%,#D4703A);transform:scaleX(0);animation:prisma-beam 700ms ease-out 200ms forwards"
+            >
+            </div>
+            <div
+              class="h-[34px] w-8 shrink-0 md:h-[42px] md:w-10"
+              style="animation:prisma-flash 700ms ease-out 550ms forwards"
+            >
+              <Image src={logoIcon} alt="" width={42} height={42} class="h-full w-full object-contain" />
+            </div>
+          </div>
+          <ul class="relative flex flex-col">
+            {categorias.map((categoria, i) => (
+              <li
+                class="flex items-center gap-3.5 border-b border-white/8 py-3 opacity-0 last:border-b-0"
+                style={`animation:prisma-chip-in 480ms ease-out ${700 + i * 85}ms forwards`}
+              >
+                <span class={`h-[18px] w-[3px] shrink-0 ${marcadores[i % 3]}`}></span>
+                <span class="font-sans text-[15.5px] text-cream">{categoria.data.nome}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="p-4 max-w-5xl mx-auto">
-    <h2 class="text-xl font-bold">Categorias</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-      {categorias.map((categoria) => (
-        <a href={`/categoria/${categoria.id}`} class="border border-gray-300 p-4 block">
-          <h3 class="font-bold">{categoria.data.nome}</h3>
-          <p class="text-sm mt-1">{categoria.data.descricao}</p>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  {aparencia.mostrarComoFunciona && (
-    <section class="p-4 max-w-5xl mx-auto">
-      <h2 class="text-xl font-bold">Como funciona</h2>
-      <ol class="mt-4 space-y-2 list-decimal list-inside">
-        <li>Você navega pelo catálogo e escolhe os equipamentos de interesse.</li>
-        <li>Chama no WhatsApp para consultar preço, prazo e condições.</li>
-        <li>Fechamos o pedido diretamente com a Prisma Equipamentos, sem intermediários.</li>
-      </ol>
-    </section>
-  )}
-
-  <section class="p-4 max-w-5xl mx-auto">
-    <h2 class="text-xl font-bold">Produtos em destaque</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-      {produtosDestaque.map((produto) => <CardProduto produto={produto} />)}
-    </div>
-  </section>
-
-  {aparencia.mostrarCidades && (
-    <section class="p-4 max-w-5xl mx-auto">
-      <h2 class="text-xl font-bold">Cidades atendidas</h2>
-      <ul class="mt-4 list-disc list-inside">
-        {cidades.map((cidade) => (
-          <li>
-            <a href={`/${cidade.id}`}>{cidade.data.nome} - {cidade.data.estado}</a>
-          </li>
+  <!-- SEGMENTOS ATENDIDOS -->
+  <section id="segmentos" class="bg-cream px-5 py-16 md:px-14 md:py-24">
+    <div class="mx-auto max-w-[1440px]">
+      <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-[#6B7F94] md:text-xs md:tracking-[1.6px]">
+        Segmentos atendidos
+      </p>
+      <h2 class="mt-3 max-w-[680px] font-display text-[28px] leading-[1.15] text-navy-800 md:mt-4 md:text-[42px]">
+        Equipamos operações de todos os portes
+      </h2>
+      <div class="mt-7 flex flex-col gap-3 md:mt-12 md:flex-row md:gap-5">
+        {segmentos.map((segmento) => (
+          <div class="flex-1 rounded-md border border-cream-border bg-white p-5 md:p-8">
+            <span class="font-mono text-xs font-semibold text-[var(--color-accent)]">{segmento.numero}</span>
+            <h3 class="mt-2.5 font-sans text-[16.5px] font-bold text-navy-800 md:mt-3.5 md:text-[19px]">
+              {segmento.titulo}
+            </h3>
+            <p class="mt-2 font-sans text-sm leading-relaxed text-[#5C6B7A] md:mt-3.5">{segmento.descricao}</p>
+          </div>
         ))}
-      </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATÁLOGO EM DESTAQUE -->
+  <section class="bg-cream px-5 pb-14 md:px-14 md:pb-24">
+    <div class="mx-auto max-w-[1440px]">
+      <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-[#6B7F94] md:text-xs md:tracking-[1.6px]">
+        Catálogo em destaque
+      </p>
+      <h2 class="mt-3 max-w-[680px] font-display text-[28px] leading-[1.15] text-navy-800 md:mt-4 md:text-[42px]">
+        Linhas completas para cozinha profissional
+      </h2>
+      <div class="mt-6 grid grid-cols-2 gap-3 md:mt-12 md:grid-cols-3 md:gap-6">
+        {categorias.map((categoria, i) => <CardCategoria categoria={categoria} corIndice={i} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- POR QUE A PRISMA -->
+  {aparencia.mostrarPorQueAPrisma && (
+    <section class="bg-navy-800 px-5 py-12 md:px-14 md:py-24">
+      <div class="mx-auto max-w-[1440px]">
+        <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-[#8FA8C1] md:text-xs md:tracking-[1.6px]">
+          Por que a Prisma
+        </p>
+        <h2 class="mt-3 max-w-[640px] font-display text-[28px] leading-[1.15] text-cream md:mt-4 md:text-[42px]">
+          Suporte de quem entende de cozinha profissional
+        </h2>
+        <div class="mt-7 flex flex-col md:mt-14 md:flex-row">
+          {porQueAPrisma.map((item, i) => (
+            <div
+              class:list={[
+                'flex flex-col gap-2 py-5 md:gap-3.5 md:py-0',
+                i === 0 ? 'md:pr-7' : 'border-t border-white/14 md:border-t-0 md:border-l md:px-7',
+                i === porQueAPrisma.length - 1 && 'md:pl-7 md:pr-0',
+              ]}
+            >
+              <span class="font-mono text-xs font-semibold text-[var(--color-accent)]">{item.numero}</span>
+              <h3 class="font-sans text-[15.5px] font-bold text-cream md:text-lg">{item.titulo}</h3>
+              <p class="font-sans text-sm leading-relaxed text-[#B9C8D6]">{item.descricao}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   )}
 
-  <section class="p-4 max-w-5xl mx-auto text-center">
-    <h2 class="text-xl font-bold">Pronto para equipar sua cozinha?</h2>
-    <div class="mt-4">
-      <BotaoWhatsApp mensagem={mensagemFinal} texto="Falar com a Prisma Equipamentos" />
+  <!-- CIDADES ATENDIDAS -->
+  {aparencia.mostrarCidades && cidades.length > 0 && (
+    <section id="area-de-atendimento" class="bg-cream px-5 py-14 md:px-14 md:py-20">
+      <div class="mx-auto max-w-[1440px]">
+        <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-[#6B7F94] md:text-xs md:tracking-[1.6px]">
+          Área de atendimento
+        </p>
+        <h2 class="mt-3 font-display text-[28px] leading-[1.15] text-navy-800 md:mt-4 md:text-[42px]">
+          Cidades atendidas
+        </h2>
+        <ul class="mt-6 flex flex-wrap gap-3 md:mt-10">
+          {cidades.map((cidade) => (
+            <li>
+              <a
+                href={`/${cidade.id}`}
+                class="inline-flex items-center gap-2 rounded border border-cream-border bg-white px-5 py-3 font-sans text-[15px] font-semibold text-navy-800 transition-colors hover:border-[var(--color-accent)]"
+              >
+                {cidade.data.nome} - {cidade.data.estado}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <!-- CTA FINAL -->
+  <section class="border-t border-white/12 bg-navy-800 px-5 py-11 text-center md:px-14 md:py-16">
+    <div class="mx-auto flex max-w-[1440px] flex-col items-center gap-4 md:gap-5.5">
+      <h2 class="font-display text-[26px] text-cream md:text-4xl">Pronto para equipar sua cozinha?</h2>
+      <p class="font-sans text-sm leading-relaxed text-[#B9C8D6] md:max-w-[460px] md:text-[15.5px]">
+        Fale com a Prisma pelo WhatsApp e receba um orçamento personalizado para o seu negócio.
+      </p>
+      <BotaoWhatsApp mensagem={mensagemFinal} texto="Pedir orçamento no WhatsApp" class="w-full md:w-auto" />
     </div>
   </section>
 </Layout>

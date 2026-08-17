@@ -1,4 +1,5 @@
 ---
+import IconWhatsApp from './IconWhatsApp.astro';
 import { linkWhatsApp } from '../lib/whatsapp';
 
 const mensagem = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.';
@@ -9,7 +10,7 @@ const mensagem = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.
   target="_blank"
   rel="noopener noreferrer"
   aria-label="Falar no WhatsApp"
-  class="fixed bottom-4 right-4 z-50 bg-[var(--color-accent)] text-white px-4 py-3 rounded-full shadow-lg font-bold"
+  class="fixed bottom-4 right-4 z-50 flex h-13 w-13 items-center justify-center rounded-full bg-[var(--color-accent)] text-cream shadow-[0_8px_20px_rgba(0,0,0,0.35)] transition-colors hover:bg-[var(--color-accent-hover)]"
 >
-  WhatsApp
+  <IconWhatsApp size={23} />
 </a>

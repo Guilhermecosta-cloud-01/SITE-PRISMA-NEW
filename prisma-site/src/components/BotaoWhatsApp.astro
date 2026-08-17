@@ -1,20 +1,35 @@
 ---
+import IconWhatsApp from './IconWhatsApp.astro';
 import { linkWhatsApp } from '../lib/whatsapp';
 
 interface Props {
   mensagem: string;
   texto?: string;
+  icone?: boolean;
+  variante?: 'primario' | 'contorno';
   class?: string;
 }
 
-const { mensagem, texto = 'Consultar preço', class: className = '' } = Astro.props;
+const {
+  mensagem,
+  texto = 'Consultar preço',
+  icone = true,
+  variante = 'primario',
+  class: className = '',
+} = Astro.props;
+
+const estilos =
+  variante === 'primario'
+    ? 'bg-[var(--color-accent)] text-cream hover:bg-[var(--color-accent-hover)]'
+    : 'border border-navy-600 text-navy-800 hover:bg-navy-800/5';
 ---
 
 <a
   href={linkWhatsApp(mensagem)}
   target="_blank"
   rel="noopener noreferrer"
-  class={`inline-block bg-[var(--color-accent)] text-white px-4 py-2 rounded ${className}`}
+  class={`inline-flex items-center justify-center gap-2 rounded font-sans text-[15px] font-semibold px-6 py-3.5 transition-colors ${estilos} ${className}`}
 >
+  {icone && <IconWhatsApp size={17} />}
   {texto}
 </a>

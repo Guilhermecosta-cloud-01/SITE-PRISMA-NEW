@@ -334,6 +334,7 @@ export default config({
       label: 'Segmentos atendidos',
       slugField: 'nome',
       path: 'src/content/segmentos/*',
+      format: { contentField: 'content' },
       schema: {
         nome: fields.slug({ name: { label: 'Nome' } }),
         descricao: fields.text({
@@ -349,6 +350,10 @@ export default config({
         }),
         ordem: fields.number({ label: 'Ordem', defaultValue: 99 }),
         ativa: fields.checkbox({ label: 'Ativa', defaultValue: true }),
+        content: fields.markdoc({
+          label: 'Observações (opcional)',
+          description: 'Não usado no site — só um campo livre caso precise anotar algo sobre esse segmento',
+        }),
       },
     }),
   },

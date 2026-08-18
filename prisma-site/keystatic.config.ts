@@ -5,9 +5,19 @@ import { config, fields, collection, singleton } from '@keystatic/core';
 // checkout de git gravável — o painel autentica com GitHub e grava via API,
 // exigindo as variáveis de ambiente KEYSTATIC_GITHUB_CLIENT_ID,
 // KEYSTATIC_GITHUB_CLIENT_SECRET e KEYSTATIC_SECRET (ver CLAUDE.md).
+// O projeto Astro fica na subpasta prisma-site/ do repositório (não na raiz).
+// Em modo local isso não importa (o painel roda com cwd em prisma-site/, e os
+// paths das coleções abaixo já são relativos a isso). Em modo GitHub, porém,
+// a API do GitHub grava relativo à RAIZ do repositório — sem pathPrefix, os
+// arquivos vão parar em src/content/... na raiz, fora de prisma-site/, e o
+// Astro nunca os vê.
 const storage: import('@keystatic/core').Config['storage'] =
   process.env.NODE_ENV === 'production'
-    ? { kind: 'github', repo: 'guilhermecosta-cloud-01/site-prisma-new' }
+    ? {
+        kind: 'github',
+        repo: 'guilhermecosta-cloud-01/site-prisma-new',
+        pathPrefix: 'prisma-site',
+      }
     : { kind: 'local' };
 
 export default config({

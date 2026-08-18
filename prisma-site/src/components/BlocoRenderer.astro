@@ -1,0 +1,88 @@
+---
+import { getCollection } from 'astro:content';
+import type { Bloco, CorFundo } from '../lib/aparencia';
+import CardSegmento from './CardSegmento.astro';
+import CardRepresentada from './CardRepresentada.astro';
+import BotaoWhatsApp from './BotaoWhatsApp.astro';
+
+interface Props {
+  bloco: Bloco;
+}
+
+const { bloco } = Astro.props;
+
+const fundos: Record<CorFundo, { secao: string; eyebrow: string; titulo: string; texto: string }> = {
+  claro: { secao: 'bg-cream', eyebrow: 'text-[#6B7F94]', titulo: 'text-navy-800', texto: 'text-[#5C6B7A]' },
+  branco: { secao: 'bg-white', eyebrow: 'text-[#6B7F94]', titulo: 'text-navy-800', texto: 'text-[#5C6B7A]' },
+  escuro: { secao: 'bg-navy-800', eyebrow: 'text-[#8FA8C1]', titulo: 'text-cream', texto: 'text-[#B9C8D6]' },
+};
+const cor = fundos[bloco.corFundo];
+
+const segmentos =
+  bloco.tipo === 'segmentos'
+    ? (await getCollection('segmentos', ({ data }) => data.ativa)).sort((a, b) => a.data.ordem - b.data.ordem)
+    : [];
+
+const representadas =
+  bloco.tipo === 'representadas'
+    ? (await getCollection('representadas', ({ data }) => data.ativa)).sort((a, b) => a.data.ordem - b.data.ordem)
+    : [];
+---
+
+<section class={`${cor.secao} px-5 py-12 md:px-14 md:py-20`}>
+  <div class="mx-auto max-w-[1440px]">
+    {bloco.subtitulo && (
+      <p class={`font-mono text-[11px] font-semibold uppercase tracking-[1.2px] md:text-xs md:tracking-[1.6px] ${cor.eyebrow}`}>
+        {bloco.subtitulo}
+      </p>
+    )}
+    <h2 class={`mt-3 max-w-[680px] font-display text-[28px] leading-[1.15] md:mt-4 md:text-[42px] ${cor.titulo}`}>
+      {bloco.titulo}
+    </h2>
+
+    {bloco.tipo === 'segmentos' && (
+      <div class="mt-7 flex flex-col gap-3 md:mt-12 md:flex-row md:gap-5">
+        {segmentos.map((segmento) => <CardSegmento segmento={segmento} />)}
+      </div>
+    )}
+
+    {bloco.tipo === 'representadas' && (
+      <div class="mt-6 grid grid-cols-2 gap-3 md:mt-12 md:grid-cols-4 md:gap-6">
+        {representadas.map((representada) => <CardRepresentada representada={representada} />)}
+      </div>
+    )}
+
+    {bloco.tipo === 'cards' && (
+      <div class="mt-7 flex flex-col md:mt-14 md:flex-row">
+        {bloco.itens.map((item, i) => (
+          <div
+            class:list={[
+              'flex flex-col gap-2 py-5 md:gap-3.5 md:py-0',
+              i === 0 ? 'md:pr-7' : 'border-t border-white/14 md:border-t-0 md:border-l md:px-7',
+              i === bloco.itens.length - 1 && 'md:pl-7 md:pr-0',
+            ]}
+          >
+            <h3 class={`font-sans text-[15.5px] font-bold md:text-lg ${cor.titulo}`}>{item.titulo}</h3>
+            <p class={`font-sans text-sm leading-relaxed ${cor.texto}`}>{item.descricao}</p>
+          </div>
+        ))}
+      </div>
+    )}
+
+    {bloco.tipo === 'cta' && (
+      <div class="mt-5 flex flex-col items-start gap-5 md:mt-7 md:flex-row md:items-end md:justify-between">
+        <p class={`max-w-xl font-sans text-sm leading-relaxed md:text-[15.5px] ${cor.texto}`}>{bloco.texto}</p>
+        {bloco.botaoMensagemWhatsapp ? (
+          <BotaoWhatsApp mensagem={bloco.botaoMensagemWhatsapp} texto={bloco.botaoTexto} class="w-full md:w-auto" />
+        ) : bloco.botaoLink ? (
+          <a
+            href={bloco.botaoLink}
+            class="inline-flex w-full items-center justify-center rounded bg-[var(--color-accent)] px-6 py-3.5 font-sans text-[15px] font-semibold text-cream transition-colors hover:bg-[var(--color-accent-hover)] md:w-auto"
+          >
+            {bloco.botaoTexto}
+          </a>
+        ) : null}
+      </div>
+    )}
+  </div>
+</section>

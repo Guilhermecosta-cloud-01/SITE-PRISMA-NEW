@@ -1,5 +1,6 @@
 ---
 import { getCollection, getEntries, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import CardProduto from '../components/CardProduto.astro';
 import BotaoWhatsApp from '../components/BotaoWhatsApp.astro';
@@ -95,8 +96,25 @@ const comoFunciona = [
   </section>
 
   <!-- 2. RECONHECIMENTO DO PROBLEMA -->
-  <section class="bg-cream px-5 py-12 md:px-14 md:py-16">
-    <div class="prose mx-auto max-w-[760px] font-sans text-[15px] leading-relaxed text-[#5C6B7A] md:text-base">
+  <section class="relative overflow-hidden bg-cream px-5 py-12 md:px-14 md:py-20">
+    {cidade.data.imagemFundo && (
+      <>
+        <Image
+          src={cidade.data.imagemFundo}
+          alt=""
+          width={1600}
+          height={900}
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <div class="absolute inset-0 bg-navy-800/80"></div>
+      </>
+    )}
+    <div
+      class:list={[
+        'prose relative mx-auto max-w-[760px] font-sans text-[15px] leading-relaxed md:text-base',
+        cidade.data.imagemFundo ? 'text-cream' : 'text-[#5C6B7A]',
+      ]}
+    >
       <Content />
     </div>
   </section>
@@ -114,7 +132,7 @@ const comoFunciona = [
       <div class="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-10 md:grid-cols-3 md:gap-6">
         {categorias.map((categoria) => (
           <div class="flex flex-col gap-3 rounded-md border border-cream-border bg-white p-5">
-            <a href={`/categoria/${categoria.id}`} class="font-sans text-[16px] font-bold text-navy-800">
+            <a href={`/tramontina/${categoria.id}`} class="font-sans text-[16px] font-bold text-navy-800">
               {categoria.data.nome}
             </a>
             <p class="font-sans text-sm leading-relaxed text-[#5C6B7A]">{categoria.data.descricao}</p>

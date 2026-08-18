@@ -1,13 +1,13 @@
 ---
 import { getCollection, getEntry, render } from 'astro:content';
 import { Image } from 'astro:assets';
-import Layout from '../../layouts/Layout.astro';
-import BotaoWhatsApp from '../../components/BotaoWhatsApp.astro';
+import Layout from '../../../layouts/Layout.astro';
+import BotaoWhatsApp from '../../../components/BotaoWhatsApp.astro';
 
 export async function getStaticPaths() {
   const produtos = await getCollection('produtos');
   return produtos.map((produto) => ({
-    params: { produto: produto.id },
+    params: { categoria: produto.data.categoria.id, produto: produto.id },
     props: { produto },
   }));
 }
@@ -21,26 +21,27 @@ const categoriaEntry = await getEntry(categoria);
 const mensagem = `Olá! Vi a ${nome} no site e queria consultar o preço.`;
 ---
 
-<Layout title={`${nome} | Prisma Equipamentos`} description={aplicacao}>
+<Layout title={`${nome} | Tramontina | Prisma Equipamentos`} description={aplicacao}>
   <div class="mx-auto max-w-3xl px-5 py-10 md:px-14 md:py-16">
+    {categoriaEntry && (
+      <p class="font-mono text-xs font-semibold uppercase tracking-[1.2px] text-[#6B7F94]">
+        <a href="/tramontina" class="hover:text-[var(--color-accent)]">Tramontina</a>
+        {' / '}
+        <a href={`/tramontina/${categoriaEntry.id}`} class="hover:text-[var(--color-accent)]">
+          {categoriaEntry.data.nome}
+        </a>
+      </p>
+    )}
+
     <Image
       src={imagem}
       alt={nome}
       width={800}
       height={600}
-      class="w-full rounded-md border border-cream-border object-cover"
+      class="mt-4 w-full rounded-md border border-cream-border object-cover"
     />
 
     <h1 class="mt-6 font-display text-[32px] leading-tight text-navy-800 md:text-[42px]">{nome}</h1>
-
-    {categoriaEntry && (
-      <p class="mt-2 font-sans text-sm text-[#5C6B7A]">
-        Categoria:{' '}
-        <a href={`/categoria/${categoriaEntry.id}`} class="font-semibold text-[var(--color-accent)]">
-          {categoriaEntry.data.nome}
-        </a>
-      </p>
-    )}
 
     <h2 class="mt-7 font-mono text-xs font-semibold uppercase tracking-[1.2px] text-[#6B7F94]">
       Especificações

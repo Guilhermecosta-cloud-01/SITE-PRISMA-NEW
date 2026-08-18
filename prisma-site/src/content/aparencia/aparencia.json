@@ -2,7 +2,59 @@
   "corDestaque": "#D4703A",
   "heroTitulo": "Sua cozinha equipada por quem entende de operação, não só de catálogo.",
   "heroTexto": "Cutelaria, panelas, indução, buffet e utensílios profissionais para restaurantes, hotéis e resorts do interior paulista. Orçamento no WhatsApp, entrega na sua cozinha.",
-  "mostrarPorQueAPrisma": true,
-  "mostrarCidades": true,
-  "textoRodapeExtra": ""
+  "textoRodapeExtra": "",
+  "blocos": [
+    {
+      "discriminant": "representadas",
+      "value": {
+        "titulo": "Marcas que representamos",
+        "subtitulo": "Nossas representadas",
+        "corFundo": "claro"
+      }
+    },
+    {
+      "discriminant": "segmentos",
+      "value": {
+        "titulo": "Equipamos operações de todos os portes",
+        "subtitulo": "Segmentos atendidos",
+        "corFundo": "claro"
+      }
+    },
+    {
+      "discriminant": "cards",
+      "value": {
+        "titulo": "Suporte de quem entende de cozinha profissional",
+        "subtitulo": "Por que a Prisma",
+        "corFundo": "escuro",
+        "itens": [
+          {
+            "titulo": "Um único contato para várias marcas",
+            "descricao": "Utensílios, exaustão, refrigeração, revestimentos, lavagem e cocção — tudo com um representante só."
+          },
+          {
+            "titulo": "Atendimento no interior de SP",
+            "descricao": "Visita técnica e suporte presencial em restaurantes, hotéis e resorts da região."
+          },
+          {
+            "titulo": "Orçamento pelo WhatsApp",
+            "descricao": "Consultoria direta para montar ou repor sua cozinha, sem burocracia."
+          },
+          {
+            "titulo": "Entrega e pós-venda",
+            "descricao": "Equipamento entregue e suporte de pós-venda garantido."
+          }
+        ]
+      }
+    },
+    {
+      "discriminant": "cta",
+      "value": {
+        "titulo": "Pronto para equipar sua cozinha?",
+        "texto": "Fale com a Prisma pelo WhatsApp e receba um orçamento personalizado para o seu negócio.",
+        "corFundo": "escuro",
+        "botaoTexto": "Pedir orçamento no WhatsApp",
+        "botaoMensagemWhatsapp": "Olá! Vi o site da Prisma Equipamentos e gostaria de um orçamento."
+      }
+    }
+  ]
 }

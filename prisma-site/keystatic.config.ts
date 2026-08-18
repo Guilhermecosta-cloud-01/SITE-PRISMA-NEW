@@ -20,6 +20,19 @@ const storage: import('@keystatic/core').Config['storage'] =
       }
     : { kind: 'local' };
 
+// Fundo de bloco: só permite os tons já existentes na paleta da marca (nunca
+// hex livre) para o editor de blocos não conseguir quebrar o contraste do
+// texto, que já é fixo por tom (claro/branco = texto navy, escuro = texto creme).
+const corFundoField = fields.select({
+  label: 'Fundo',
+  options: [
+    { label: 'Claro (creme)', value: 'claro' },
+    { label: 'Escuro (azul-marinho)', value: 'escuro' },
+    { label: 'Branco', value: 'branco' },
+  ],
+  defaultValue: 'claro',
+});
+
 export default config({
   storage,
   singletons: {
@@ -43,18 +56,77 @@ export default config({
           multiline: true,
           validation: { isRequired: true },
         }),
-        mostrarPorQueAPrisma: fields.checkbox({
-          label: 'Mostrar seção "Por que a Prisma" na home',
-          defaultValue: true,
-        }),
-        mostrarCidades: fields.checkbox({
-          label: 'Mostrar seção "Cidades atendidas" na home',
-          defaultValue: true,
-        }),
         textoRodapeExtra: fields.text({
           label: 'Linha extra no rodapé',
           description: 'Opcional — ex. endereço, horário de atendimento',
         }),
+        blocos: fields.array(
+          fields.conditional(
+            fields.select({
+              label: 'Tipo de bloco',
+              options: [
+                { label: 'Segmentos atendidos (grid)', value: 'segmentos' },
+                { label: 'Representadas (grid)', value: 'representadas' },
+                { label: 'Cards de destaque', value: 'cards' },
+                { label: 'Chamada para ação (CTA)', value: 'cta' },
+              ],
+              defaultValue: 'segmentos',
+            }),
+            {
+              segmentos: fields.object({
+                titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
+                subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
+                corFundo: corFundoField,
+              }),
+              representadas: fields.object({
+                titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
+                subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
+                corFundo: corFundoField,
+              }),
+              cards: fields.object({
+                titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
+                subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
+                corFundo: corFundoField,
+                itens: fields.array(
+                  fields.object({
+                    titulo: fields.text({ label: 'Título', validation: { isRequired: true } }),
+                    descricao: fields.text({
+                      label: 'Descrição',
+                      multiline: true,
+                      validation: { isRequired: true },
+                    }),
+                  }),
+                  {
+                    label: 'Itens',
+                    itemLabel: (props) => props.fields.titulo.value || 'Item',
+                  },
+                ),
+              }),
+              cta: fields.object({
+                titulo: fields.text({ label: 'Título', validation: { isRequired: true } }),
+                texto: fields.text({ label: 'Texto', multiline: true, validation: { isRequired: true } }),
+                corFundo: corFundoField,
+                botaoTexto: fields.text({ label: 'Texto do botão', validation: { isRequired: true } }),
+                botaoMensagemWhatsapp: fields.text({
+                  label: 'Mensagem do WhatsApp',
+                  description: 'Preencha se o botão deve abrir o WhatsApp com essa mensagem',
+                  multiline: true,
+                }),
+                botaoLink: fields.text({
+                  label: 'Link interno',
+                  description:
+                    'Preencha em vez da mensagem de WhatsApp se o botão deve levar a uma página do site (ex.: /area-de-atendimento)',
+                }),
+              }),
+            },
+          ),
+          {
+            label: 'Blocos da home',
+            description:
+              'Arraste para reordenar, adicione ou remova blocos para montar a página. A seção de hero não é um bloco — fica sempre fixa no topo.',
+            itemLabel: (props) => props.discriminant,
+          },
+        ),
       },
     }),
   },
@@ -153,6 +225,14 @@ export default config({
           itemLabel: (props) => props.value || 'Item',
         }),
 
+        imagemFundo: fields.image({
+          label: 'Imagem de fundo (seção 2 — gatilho visual)',
+          description:
+            'Opcional. Foto real da cidade (fachada, região, evento local) usada como fundo atrás do texto de reconhecimento do problema. Não use banco de imagem genérico.',
+          directory: 'src/assets',
+          publicPath: '../../assets/',
+        }),
+
         produtosDestaque: fields.multiRelationship({
           label: 'Produtos em destaque desta cidade (seção 4)',
           collection: 'produtos',
@@ -209,6 +289,66 @@ export default config({
         ordem: fields.number({ label: 'Ordem', defaultValue: 99 }),
         ativa: fields.checkbox({ label: 'Ativa', defaultValue: true }),
         content: fields.markdoc({ label: 'Conteúdo (introdução da região)' }),
+      },
+    }),
+    representadas: collection({
+      label: 'Representadas',
+      slugField: 'nome',
+      path: 'src/content/representadas/*',
+      format: { contentField: 'content' },
+      schema: {
+        nome: fields.slug({ name: { label: 'Nome' } }),
+        segmento: fields.text({
+          label: 'Segmento',
+          description: 'Ex.: "Exaustão industrial", "Refrigeração comercial"',
+          validation: { isRequired: true },
+        }),
+        descricaoCurta: fields.text({
+          label: 'Descrição curta (tagline)',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        logo: fields.image({
+          label: 'Logo',
+          description: 'Opcional — enquanto não tiver o arquivo, o site mostra o nome da marca em texto',
+          directory: 'src/assets',
+          publicPath: '../../assets/',
+        }),
+        nomeCatalogo: fields.text({
+          label: 'Nome do catálogo',
+          description: 'Usado na mensagem de WhatsApp do botão "Pedir catálogo". Ex.: "Catálogo Tuboar"',
+          validation: { isRequired: true },
+        }),
+        temCatalogoOnline: fields.checkbox({
+          label: 'Tem catálogo navegável no site',
+          description:
+            'Só marque se essa marca já tiver produtos/categorias cadastrados no site (hoje, só a Tramontina)',
+          defaultValue: false,
+        }),
+        ordem: fields.number({ label: 'Ordem', defaultValue: 99 }),
+        ativa: fields.checkbox({ label: 'Ativa', defaultValue: true }),
+        content: fields.markdoc({ label: 'Apresentação da marca' }),
+      },
+    }),
+    segmentos: collection({
+      label: 'Segmentos atendidos',
+      slugField: 'nome',
+      path: 'src/content/segmentos/*',
+      schema: {
+        nome: fields.slug({ name: { label: 'Nome' } }),
+        descricao: fields.text({
+          label: 'Descrição',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        imagem: fields.image({
+          label: 'Imagem',
+          description: 'Opcional',
+          directory: 'src/assets',
+          publicPath: '../../assets/',
+        }),
+        ordem: fields.number({ label: 'Ordem', defaultValue: 99 }),
+        ativa: fields.checkbox({ label: 'Ativa', defaultValue: true }),
       },
     }),
   },

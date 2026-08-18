@@ -29,40 +29,44 @@ const categorias = defineCollection({
 
 const cidades = defineCollection({
   loader: glob({ pattern: '**/*.mdoc', base: './src/content/cidades' }),
-  schema: z.object({
-    nome: z.string(),
-    estado: z.string().default('SP'),
-    metaTitle: z.string(),
-    metaDescription: z.string(),
-    segmentosFortes: z.array(z.string()),
-    prazoEntrega: z.string(),
-    ativa: z.boolean().default(true),
+  schema: ({ image }) =>
+    z.object({
+      nome: z.string(),
+      estado: z.string().default('SP'),
+      metaTitle: z.string(),
+      metaDescription: z.string(),
+      segmentosFortes: z.array(z.string()),
+      prazoEntrega: z.string(),
+      ativa: z.boolean().default(true),
 
-    // Seção 1 — hero
-    heroTexto: z.string(),
-    provaRapida: z.array(z.string()).default([]),
+      // Seção 1 — hero
+      heroTexto: z.string(),
+      provaRapida: z.array(z.string()).default([]),
 
-    // Seção 4 — produtos em destaque específicos desta cidade (opcional; se
-    // vazio, a página cai no conjunto global de produtos com destaque:true)
-    produtosDestaque: z.array(reference('produtos')).default([]),
+      // Seção 2 — imagem de fundo atrás do reconhecimento do problema (gatilho visual, opcional)
+      imagemFundo: image().optional(),
 
-    // Seção 6 — objeções / FAQ
-    faq: z
-      .array(
-        z.object({
-          pergunta: z.string(),
-          resposta: z.string(),
-        }),
-      )
-      .default([]),
+      // Seção 4 — produtos em destaque específicos desta cidade (opcional; se
+      // vazio, a página cai no conjunto global de produtos com destaque:true)
+      produtosDestaque: z.array(reference('produtos')).default([]),
 
-    // Seção 7 — prova social (opcional; a seção some se vazio)
-    depoimentoTexto: z.string().optional(),
-    depoimentoAutor: z.string().optional(),
-    depoimentoEstabelecimento: z.string().optional(),
+      // Seção 6 — objeções / FAQ
+      faq: z
+        .array(
+          z.object({
+            pergunta: z.string(),
+            resposta: z.string(),
+          }),
+        )
+        .default([]),
 
-    // Corpo em Markdoc = Seção 2 (reconhecimento do problema)
-  }),
+      // Seção 7 — prova social (opcional; a seção some se vazio)
+      depoimentoTexto: z.string().optional(),
+      depoimentoAutor: z.string().optional(),
+      depoimentoEstabelecimento: z.string().optional(),
+
+      // Corpo em Markdoc = Seção 2 (reconhecimento do problema)
+    }),
 });
 
 const regioes = defineCollection({
@@ -77,4 +81,32 @@ const regioes = defineCollection({
   }),
 });
 
-export const collections = { produtos, categorias, cidades, regioes };
+const representadas = defineCollection({
+  loader: glob({ pattern: '**/*.mdoc', base: './src/content/representadas' }),
+  schema: ({ image }) =>
+    z.object({
+      nome: z.string(),
+      segmento: z.string(),
+      descricaoCurta: z.string(),
+      logo: image().optional(),
+      nomeCatalogo: z.string(),
+      temCatalogoOnline: z.boolean().default(false),
+      ordem: z.number().default(99),
+      ativa: z.boolean().default(true),
+      // Corpo em Markdoc = apresentação da marca
+    }),
+});
+
+const segmentos = defineCollection({
+  loader: glob({ pattern: '**/*.mdoc', base: './src/content/segmentos' }),
+  schema: ({ image }) =>
+    z.object({
+      nome: z.string(),
+      descricao: z.string(),
+      imagem: image().optional(),
+      ordem: z.number().default(99),
+      ativa: z.boolean().default(true),
+    }),
+});
+
+export const collections = { produtos, categorias, cidades, regioes, representadas, segmentos };

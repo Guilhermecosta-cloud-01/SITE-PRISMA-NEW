@@ -27,7 +27,7 @@ manager) sem alinhar antes.
 ## Modelo de conteúdo
 
 Definido em `src/content.config.ts` usando o **Content Layer** do Astro (loader `glob`
-de `astro/loaders`), lendo os arquivos em `src/content/`. Quatro coleções:
+de `astro/loaders`), lendo os arquivos em `src/content/`. Seis coleções:
 
 - **produtos** (`src/content/produtos/*.mdoc`): `nome`, `categoria` (**referência** —
   `reference('categorias')`, ver "Referências entre coleções" abaixo), `codigo?`,
@@ -49,13 +49,23 @@ de `astro/loaders`), lendo os arquivos em `src/content/`. Quatro coleções:
   `ativa` (boolean, default `true`). Corpo em Markdoc = introdução da região. Uma região
   **não é** uma cidade — é uma página de hub simples (`/regiao/[regiao]`) que agrupa e
   linka para as páginas de cidade que a compõem, para reforço de SEO/linkagem interna.
+- **representadas** (`src/content/representadas/*.mdoc`): as marcas parceiras que a
+  Prisma representa — desde agosto/2026, o item principal do site, não os produtos. `nome`,
+  `segmento` (ex.: "Exaustão Industrial"), `descricaoCurta`, `logo?`, `nomeCatalogo` (ex.:
+  "Catálogo Tuboar" — usado na mensagem de WhatsApp do botão de pedir catálogo),
+  `temCatalogoOnline` (boolean, default `false` — só `true` para a Tramontina hoje, ver
+  "Rotas da Tramontina vs. outras representadas" abaixo), `ordem`, `ativa`. Corpo em
+  Markdoc = apresentação da marca.
+- **segmentos** (`src/content/segmentos/*.mdoc`): a antiga seção "Segmentos atendidos" da
+  home, que era uma lista fixa em `index.astro` e virou coleção editável: `nome`,
+  `descricao`, `imagem?`, `ordem`, `ativa`. Sem corpo Markdoc (não precisa).
 
 Imagens usam o schema `image()` do Astro e devem ficar em `src/assets/` — nunca URLs
 externas.
 
 O slug de cada entrada (usado nas rotas) é o nome do arquivo. Ex.: `campinas.mdoc` →
-`/campinas`; `faca-chef-tramontina.mdoc` → `/produto/faca-chef-tramontina`;
-`regiao-de-campinas.mdoc` → `/regiao/regiao-de-campinas`.
+`/campinas`; `regiao-de-campinas.mdoc` → `/regiao/regiao-de-campinas`; produtos da
+Tramontina ficam aninhados sob a categoria — ver seção de rotas abaixo.
 
 ### Referências entre coleções (relationship / multiRelationship)
 
@@ -73,6 +83,47 @@ uma string, é um objeto `{ collection, id }`. Para resolver a entrada:
 - Comparar com o `id` de outra entrada é `produto.data.categoria.id === categoria.id`,
   nunca `produto.data.categoria === categoria.id`.
 
+## Rotas das representadas (Tramontina vs. as outras 6 marcas)
+
+Desde agosto/2026, "Representadas" é o item principal do site (não "Catálogo" — essa
+rota não existe mais). As 7 marcas (Tramontina, Tuboar, Ártico, Miaki, Netter, Solidus,
+Freecook) aparecem em `/representadas` (hub) e no grid da home, mas cada uma resolve
+para uma rota diferente dependendo de `temCatalogoOnline`:
+
+- **Tramontina** (`temCatalogoOnline: true`, hoje a única com produtos cadastrados) vive
+  em rotas próprias e aninhadas, fora do prefixo `/representada/`:
+  - `/tramontina` — hero da marca (lida da entrada `representadas/tramontina.mdoc`) +
+    listagem completa por categoria + botão "Pedir catálogo completo" no WhatsApp
+    (mensagem usa `nomeCatalogo`). Substitui a antiga `/catalogo`.
+  - `/tramontina/[categoria]` — produtos daquela categoria (era `/categoria/[categoria]`)
+    + CTA de "pedir catálogo completo".
+  - `/tramontina/[categoria]/[produto]` — ficha do produto (era `/produto/[produto]`).
+  - Motivo de ficar fora de `/representada/`: pedido explícito do usuário
+    ("Tramontina/CatalogoX/ProdutoY"), já que é a única marca com catálogo navegável de
+    verdade hoje.
+- **As outras 6 marcas** (`temCatalogoOnline: false`) vivem em
+  `/representada/[representada]` — uma página única (hero + apresentação em Markdoc +
+  botão "Solicitar catálogo no WhatsApp"), sem produtos individuais, porque a Prisma
+  ainda não tem esses catálogos digitalizados no site.
+
+`CardRepresentada.astro` decide o href automaticamente: `/${id}` se
+`temCatalogoOnline`, senão `/representada/${id}`. Se outra marca ganhar produtos
+cadastrados no futuro, o padrão é replicar a árvore de rotas da Tramontina para ela
+(não dá pra ter duas marcas em `/[representada]` bare-root ao mesmo tempo — teria dois
+arquivos disputando a mesma rota dinâmica de um segmento só).
+
+⚠️ **Logos das marcas**: nenhuma das 7 tem arquivo de logo no repositório ainda — o
+campo `logo` é opcional e, sem ele, `CardRepresentada.astro` mostra o nome da marca em
+texto (`font-display`) no lugar da imagem. Não faça scraping de logo oficial da internet
+(risco de marca registrada e de pegar versão desatualizada/errada) — peça o arquivo
+para o usuário e suba em `src/assets/`.
+
+⚠️ **Conteúdo das representadas veio de uma apresentação de 12 slides** (uma por marca),
+sem specs técnicas, modelos nomeados, certificações ou garantias — só ano de fundação,
+sede e frases de posicionamento genéricas para a maioria. Cada `.mdoc` tem `TODO:` onde
+o material fonte não tinha fato concreto. Não invente specs para preencher — peça a
+informação real antes de tirar o `TODO`.
+
 ## Página de cidade — estrutura (`src/pages/[cidade].astro`)
 
 A página de cada cidade segue uma landing page de 9 seções (não é mais um resumo
@@ -80,9 +131,13 @@ genérico) — cada seção lê um campo específico do schema de `cidades` acim
 
 1. **Hero** — eyebrow + h1 + `heroTexto` + 2 CTAs (orçamento / catálogo) + faixa de
    `provaRapida`.
-2. **Reconhecimento do problema** — corpo Markdoc da entrada.
+2. **Reconhecimento do problema** — corpo Markdoc da entrada. Se `imagemFundo` estiver
+   preenchida (opcional), a foto vira fundo da seção com um overlay escuro por trás do
+   texto — use foto real da cidade/região, nunca banco de imagem genérico.
 3. **Categorias** — grid das categorias globais, cada uma com `descricao` real + CTA de
-   WhatsApp contextual por categoria.
+   WhatsApp contextual por categoria. Cada card já linka para `/tramontina/[categoria]`
+   (ver "Rotas das representadas" acima) — essa seção continua sendo sobre linhas de
+   produto Tramontina, não sobre as outras representadas.
 4. **Produtos em destaque** — `produtosDestaque` da cidade, ou fallback para os produtos
    globais com `destaque: true`.
 5. **Como funciona** — 3 passos fixos (WhatsApp → orçamento → entrega/pós-venda), iguais
@@ -245,12 +300,30 @@ copiada é penalizada pelo Google como doorway page — não gere cidades sem pr
 
 ## Como adicionar um produto
 
+Produto é sempre da Tramontina (é a única representada com catálogo navegável — ver
+"Rotas das representadas" acima).
+
 1. Pelo Keystatic (`/keystatic` → Produtos → Criar) ou direto em
    `src/content/produtos/<slug>.mdoc`.
-2. `categoria` deve ser exatamente o slug (nome do arquivo, sem `.mdoc`) de uma entrada
-   existente em `src/content/categorias/`.
+2. `categoria` é uma referência (`reference('categorias')`/`fields.relationship`) — no
+   painel é uma lista suspensa das categorias existentes; editando o arquivo à mão, use
+   o slug (nome do arquivo, sem `.mdoc`) de uma entrada de `src/content/categorias/`.
 3. Adicione a imagem em `src/assets/` e referencie no campo `imagem`.
 4. `destaque: true` faz o produto aparecer na home e nas páginas de cidade.
+5. A URL final é `/tramontina/<categoria>/<slug-do-produto>` — gerada automaticamente
+   por `src/pages/tramontina/[categoria]/[produto].astro`, nada a configurar.
+
+## Como adicionar uma representada
+
+1. Pelo Keystatic (`/keystatic` → Representadas → Criar) ou direto em
+   `src/content/representadas/<slug>.mdoc`.
+2. Preencha `segmento`, `descricaoCurta` e `nomeCatalogo` com informação real — nunca
+   invente specs, certificações ou modelos que não vieram de fonte confirmada (ver aviso
+   em "Rotas das representadas" sobre a apresentação de 12 slides que originou o
+   conteúdo atual).
+3. Deixe `temCatalogoOnline` desmarcado a menos que você também vá cadastrar produtos
+   dessa marca em `src/content/produtos/` e replicar a árvore de rotas da Tramontina —
+   sem isso, a página fica só com apresentação + botão de WhatsApp.
 
 ## Como mudar o layout sem mexer em código
 
@@ -265,14 +338,40 @@ editar nenhum componente:
   `BotaoWhatsApp.astro`, `WhatsAppFlutuante.astro`, `CardProduto.astro`) — assim a cor
   muda no site inteiro a partir de um único campo no painel.
 - **Título e texto do hero** da home (`heroTitulo`, `heroTexto`).
-- **Mostrar/ocultar** as seções "Por que a Prisma" e "Cidades atendidas" da home
-  (`mostrarPorQueAPrisma`, `mostrarCidades`).
 - **Linha extra do rodapé** (`textoRodapeExtra`), opcional.
+- **Blocos da home** (`blocos`) — ver seção seguinte.
 
-Isso NÃO é um builder visual (arrastar/soltar, mudar espaçamento, reordenar seções
-livremente) — foi um limite deliberado para não trazer nenhuma dependência nova fora da
-stack combinada. Para mudanças de layout além desses campos (nova seção, reordenar,
-tipografia, etc.), ainda é preciso editar o código.
+### Blocos da home (page builder via Keystatic)
+
+O corpo da home (tudo abaixo do hero, que continua fixo/codificado em `index.astro`) é
+uma lista de blocos editável em `/keystatic` → Aparência → "Blocos da home":
+**arrastar para reordenar, adicionar, remover e escolher a cor de fundo de cada bloco**,
+sem tocar em código. É construído com o mecanismo nativo do Keystatic para isso —
+`fields.array(fields.conditional(...))` — não trouxe nenhuma dependência nova.
+
+Tipos de bloco disponíveis (o discriminante fica em `bloco.tipo` depois de lido por
+`src/lib/aparencia.ts`):
+- `segmentos` — grid da coleção `segmentos` (título/subtítulo + cor de fundo).
+- `representadas` — grid da coleção `representadas` (título/subtítulo + cor de fundo).
+- `cards` — lista de cards manuais (`itens: {titulo, descricao}[]`) — usado hoje para
+  "Por que a Prisma".
+- `cta` — chamada para ação: texto + botão que abre WhatsApp (`botaoMensagemWhatsapp`)
+  **ou** navega para uma página interna (`botaoLink`, ex. `/area-de-atendimento`) —
+  preencha só um dos dois.
+
+`corFundo` é sempre um select fechado (`claro` / `escuro` / `branco`), nunca hex livre —
+de propósito, pra não dar pra quebrar o contraste do texto (que já é fixo por tom em
+`BlocoRenderer.astro`: fundo escuro = texto creme, claro/branco = texto navy).
+
+⚠️ **Formato bruto no JSON**: um campo `fields.conditional` do Keystatic grava cada item
+como `{ discriminant: "tipo", value: { ...campos } }`, não um objeto plano — ver o
+comentário em `src/lib/aparencia.ts` (`BlocoBruto`) antes de mexer nesse arquivo à mão.
+
+⚠️ **Escopo atual**: só a home usa blocos. As páginas de cidade e de representada
+continuam com estrutura fixa em componente (o usuário pediu explicitamente "page
+builder completo"; a versão viável dentro da stack combinada — sem trazer um editor
+visual externo — é esse mecanismo de blocos do Keystatic. Aplicar o mesmo padrão a
+outras páginas é factível, mas não foi feito nesta rodada).
 
 ## Regras invioláveis
 
@@ -287,7 +386,13 @@ tipografia, etc.), ainda é preciso editar o código.
 - **A identidade visual é a do design importado** (ver seção "Identidade visual") — não
   troque paleta, tipografia ou logo por conta própria; para uma mudança de layout maior
   (nova seção, reordenar, novo componente), alinhe antes de implementar.
-- **Sem busca, filtro avançado, área de cliente, blog ou newsletter.**
+- **Sem filtro avançado, área de cliente, blog ou newsletter.** A única exceção pedida
+  pelo usuário é a busca por nome de cidade em `/area-de-atendimento` (filtro de texto
+  client-side em cima da lista de cidades ativas, sem backend) — não estenda busca para
+  outras páginas sem pedido explícito.
+- **Formulário de `/area-de-atendimento`** (nome, CNPJ, cidade) não envia dado a
+  nenhum backend/planilha — só monta a mensagem e abre `wa.me` no client (`<script
+  define:vars>`). Não adicione armazenamento server-side sem que o usuário peça.
 - **Sem cidades além das já cadastradas** sem pedido explícito.
 - **Sem imagens ou fontes de serviço externo em runtime** — assets ficam no repo
   (`src/assets/`, `public/fonts/`); fontes do Google foram baixadas uma vez e são

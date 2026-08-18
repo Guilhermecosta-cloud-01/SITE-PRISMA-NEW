@@ -8,18 +8,19 @@ interface Props {
 }
 
 const { produto } = Astro.props;
-const { nome, imagem, specs } = produto.data;
+const { nome, imagem, specs, categoria } = produto.data;
 
+const href = `/tramontina/${categoria.id}/${produto.id}`;
 const mensagem = `Olá! Vi a ${nome} no site e queria consultar o preço.`;
 ---
 
 <article class="flex flex-col overflow-hidden rounded-md border border-cream-border bg-white">
-  <a href={`/produto/${produto.id}`}>
+  <a href={href}>
     <Image src={imagem} alt={nome} width={400} height={300} class="h-[180px] w-full object-cover" />
   </a>
   <div class="flex flex-1 flex-col gap-3 p-5">
     <h3 class="font-sans text-[17px] font-bold text-navy-800">
-      <a href={`/produto/${produto.id}`}>{nome}</a>
+      <a href={href}>{nome}</a>
     </h3>
     <ul class="flex flex-col gap-1 font-sans text-sm text-[#5C6B7A]">
       {specs.slice(0, 3).map((spec) => <li>{spec}</li>)}

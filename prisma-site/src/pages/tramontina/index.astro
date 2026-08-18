@@ -1,0 +1,68 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import CardProduto from '../../components/CardProduto.astro';
+import BotaoWhatsApp from '../../components/BotaoWhatsApp.astro';
+
+const representada = await getEntry('representadas', 'tramontina');
+
+if (!representada) {
+  throw new Error(
+    'Falta a entrada "tramontina" na coleção Representadas (src/content/representadas/tramontina.mdoc) — a página /tramontina depende dela.',
+  );
+}
+
+const { nome, segmento, descricaoCurta, nomeCatalogo } = representada.data;
+const { Content } = await render(representada);
+
+const categorias = (await getCollection('categorias')).sort((a, b) => a.data.ordem - b.data.ordem);
+const produtos = await getCollection('produtos');
+
+const categoriasComProdutos = categorias
+  .map((categoria) => ({
+    categoria,
+    produtos: produtos
+      .filter((produto) => produto.data.categoria.id === categoria.id)
+      .sort((a, b) => a.data.ordem - b.data.ordem),
+  }))
+  .filter(({ produtos: produtosDaCategoria }) => produtosDaCategoria.length > 0);
+
+const mensagemCatalogo = `Olá! Gostaria de receber o ${nomeCatalogo}.`;
+---
+
+<Layout
+  title={`${nome} | Prisma Equipamentos`}
+  description={descricaoCurta}
+>
+  <section class="bg-navy-800 px-5 py-12 md:px-14 md:py-16">
+    <div class="mx-auto max-w-[1440px]">
+      <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-[#8FA8C1] md:text-xs">
+        {segmento}
+      </p>
+      <h1 class="mt-3 max-w-2xl font-display text-[32px] leading-tight text-cream md:text-[46px]">{nome}</h1>
+      <p class="mt-4 max-w-xl font-sans text-[15px] leading-relaxed text-[#B9C8D6] md:text-lg">{descricaoCurta}</p>
+      <div class="mt-7">
+        <BotaoWhatsApp mensagem={mensagemCatalogo} texto="Pedir catálogo completo" class="w-full md:w-auto" />
+      </div>
+    </div>
+  </section>
+
+  <div class="mx-auto max-w-[1440px] px-5 py-10 md:px-14 md:py-16">
+    <div class="prose max-w-3xl font-sans text-[15px] leading-relaxed text-[#5C6B7A]">
+      <Content />
+    </div>
+
+    {categoriasComProdutos.map(({ categoria, produtos: produtosDaCategoria }) => (
+      <section class="mt-10 md:mt-14">
+        <h2 class="font-display text-2xl text-navy-800 md:text-3xl">
+          <a href={`/tramontina/${categoria.id}`} class="hover:text-[var(--color-accent)] transition-colors">
+            {categoria.data.nome}
+          </a>
+        </h2>
+        <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
+          {produtosDaCategoria.map((produto) => <CardProduto produto={produto} />)}
+        </div>
+      </section>
+    ))}
+  </div>
+</Layout>

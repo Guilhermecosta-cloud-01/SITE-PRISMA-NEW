@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import CardRepresentada from '../components/CardRepresentada.astro';
+
+const representadas = (await getCollection('representadas', ({ data }) => data.ativa)).sort(
+  (a, b) => a.data.ordem - b.data.ordem,
+);
+---
+
+<Layout
+  title="Representadas | Prisma Equipamentos"
+  description="Marcas que a Prisma Equipamentos representa no interior de São Paulo: utensílios, exaustão, refrigeração, revestimentos, lavagem e cocção profissional."
+>
+  <div class="mx-auto max-w-[1440px] px-5 py-10 md:px-14 md:py-16">
+    <h1 class="font-display text-[32px] leading-tight text-navy-800 md:text-[46px]">Representadas</h1>
+    <p class="mt-3 max-w-2xl font-sans text-[15px] leading-relaxed text-[#5C6B7A] md:text-lg">
+      Um único contato para as principais marcas de equipamento profissional de cozinha.
+    </p>
+
+    <div class="mt-8 grid grid-cols-2 gap-3 md:mt-12 md:grid-cols-4 md:gap-6">
+      {representadas.map((representada) => <CardRepresentada representada={representada} />)}
+    </div>
+  </div>
+</Layout>

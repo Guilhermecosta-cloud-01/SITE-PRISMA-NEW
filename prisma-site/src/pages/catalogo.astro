@@ -10,7 +10,7 @@ const categoriasComProdutos = categorias
   .map((categoria) => ({
     categoria,
     produtos: produtos
-      .filter((produto) => produto.data.categoria === categoria.id)
+      .filter((produto) => produto.data.categoria.id === categoria.id)
       .sort((a, b) => a.data.ordem - b.data.ordem),
   }))
   .filter(({ produtos: produtosDaCategoria }) => produtosDaCategoria.length > 0);

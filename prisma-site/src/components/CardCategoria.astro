@@ -5,10 +5,12 @@ import type { CollectionEntry } from 'astro:content';
 interface Props {
   categoria: CollectionEntry<'categorias'>;
   corIndice?: number;
+  mostrarDescricao?: boolean;
+  frase?: string;
 }
 
-const { categoria, corIndice = 0 } = Astro.props;
-const { nome, imagem } = categoria.data;
+const { categoria, corIndice = 0, mostrarDescricao = false, frase } = Astro.props;
+const { nome, imagem, descricao } = categoria.data;
 
 const cores = ['border-navy-600', 'border-cream-border', 'border-[var(--color-accent)]'];
 const corBorda = cores[corIndice % cores.length];
@@ -21,19 +23,24 @@ const corBorda = cores[corIndice % cores.length];
   <div class={`h-[110px] border-b-[3px] md:h-[200px] ${corBorda}`}>
     {imagem && <Image src={imagem} alt={nome} width={400} height={200} class="h-full w-full object-cover" />}
   </div>
-  <div class="flex items-center justify-between gap-2 p-3.5 md:p-5">
-    <span class="font-sans text-[13.5px] font-bold text-navy-800 md:text-[17px]">{nome}</span>
-    <span class="inline-flex shrink-0 items-center gap-1.5 font-sans text-[11.5px] font-semibold text-[var(--color-accent)] md:text-[13.5px]">
-      Ver itens
-      <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true">
-        <path
-          d="M1 5h11.5M8 1l4.5 4L8 9"
-          stroke="currentColor"
-          stroke-width="1.6"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        ></path>
-      </svg>
-    </span>
+  <div class="flex flex-col gap-1.5 p-3.5 md:p-5">
+    <div class="flex items-center justify-between gap-2">
+      <span class="font-sans text-[13.5px] font-bold text-navy-800 md:text-[17px]">{nome}</span>
+      <span class="inline-flex shrink-0 items-center gap-1.5 font-sans text-[11.5px] font-semibold text-[var(--color-accent)] md:text-[13.5px]">
+        Ver itens
+        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" aria-hidden="true">
+          <path
+            d="M1 5h11.5M8 1l4.5 4L8 9"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          ></path>
+        </svg>
+      </span>
+    </div>
+    {mostrarDescricao && (
+      <p class="font-sans text-[12.5px] leading-snug text-[#5C6B7A] md:text-sm">{frase || descricao}</p>
+    )}
   </div>
 </a>

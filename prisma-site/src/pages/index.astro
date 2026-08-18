@@ -20,22 +20,18 @@ const marcadores = ['bg-navy-600', 'bg-cream-border', 'bg-[var(--color-accent)]'
 
 const segmentos = [
   {
-    numero: '01',
     titulo: 'Restaurantes',
     descricao: 'Cardápios de alto volume, cozinha de produção contínua e mesa posta para o salão.',
   },
   {
-    numero: '02',
     titulo: 'Hotéis e Pousadas',
     descricao: 'Café da manhã, room service e banquetes com equipamento para múltiplos turnos.',
   },
   {
-    numero: '03',
     titulo: 'Resorts',
     descricao: 'Estrutura para restaurante, bares e eventos dentro de um único empreendimento.',
   },
   {
-    numero: '04',
     titulo: 'Buffets e Eventos',
     descricao: 'Equipamento de buffet e transporte térmico para servir fora da cozinha fixa.',
   },
@@ -43,22 +39,18 @@ const segmentos = [
 
 const porQueAPrisma = [
   {
-    numero: '01',
     titulo: 'Representante autorizado Tramontina',
     descricao: 'Linha completa de equipamentos profissionais com garantia de fábrica.',
   },
   {
-    numero: '02',
     titulo: 'Atendimento no interior de SP',
     descricao: 'Visita técnica e suporte presencial em restaurantes, hotéis e resorts da região.',
   },
   {
-    numero: '03',
     titulo: 'Orçamento pelo WhatsApp',
     descricao: 'Consultoria direta para montar ou repor sua cozinha, sem burocracia.',
   },
   {
-    numero: '04',
     titulo: 'Entrega e instalação',
     descricao: 'Equipamento entregue e pronto para operar na sua cozinha.',
   },
@@ -147,8 +139,7 @@ const porQueAPrisma = [
       <div class="mt-7 flex flex-col gap-3 md:mt-12 md:flex-row md:gap-5">
         {segmentos.map((segmento) => (
           <div class="flex-1 rounded-md border border-cream-border bg-white p-5 md:p-8">
-            <span class="font-mono text-xs font-semibold text-[var(--color-accent)]">{segmento.numero}</span>
-            <h3 class="mt-2.5 font-sans text-[16.5px] font-bold text-navy-800 md:mt-3.5 md:text-[19px]">
+            <h3 class="font-sans text-[16.5px] font-bold text-navy-800 md:text-[19px]">
               {segmento.titulo}
             </h3>
             <p class="mt-2 font-sans text-sm leading-relaxed text-[#5C6B7A] md:mt-3.5">{segmento.descricao}</p>
@@ -192,7 +183,6 @@ const porQueAPrisma = [
                 i === porQueAPrisma.length - 1 && 'md:pl-7 md:pr-0',
               ]}
             >
-              <span class="font-mono text-xs font-semibold text-[var(--color-accent)]">{item.numero}</span>
               <h3 class="font-sans text-[15.5px] font-bold text-cream md:text-lg">{item.titulo}</h3>
               <p class="font-sans text-sm leading-relaxed text-[#B9C8D6]">{item.descricao}</p>
             </div>

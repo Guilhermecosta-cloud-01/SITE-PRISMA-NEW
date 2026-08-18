@@ -13,7 +13,7 @@ const links = [
 ];
 ---
 
-<header class="relative bg-navy-800">
+<header class="sticky top-0 z-50 bg-navy-800 shadow-[0_1px_0_rgba(255,255,255,0.08)]">
   <div class="max-w-[1440px] mx-auto flex items-center justify-between px-5 py-4 md:px-14 md:py-6">
     <a href="/" aria-label="Prisma Equipamentos — início">
       <span class="md:hidden">
@@ -37,7 +37,7 @@ const links = [
         href={linkWhatsApp(mensagem)}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 rounded border border-navy-600 px-5 py-2.5 font-sans text-sm font-semibold text-cream hover:bg-white/5 hover:border-cream transition-colors"
+        class="inline-flex items-center gap-2 rounded bg-[var(--color-accent)] px-5 py-2.5 font-sans text-sm font-semibold text-cream shadow-sm transition-colors hover:bg-[var(--color-accent-hover)]"
       >
         <IconWhatsApp size={16} />
         Falar no WhatsApp
@@ -66,7 +66,7 @@ const links = [
           href={linkWhatsApp(mensagem)}
           target="_blank"
           rel="noopener noreferrer"
-          class="mt-2 inline-flex items-center justify-center gap-2 rounded border border-navy-600 px-5 py-2.5 font-sans text-sm font-semibold text-cream"
+          class="mt-2 inline-flex items-center justify-center gap-2 rounded bg-[var(--color-accent)] px-5 py-2.5 font-sans text-sm font-semibold text-cream"
         >
           <IconWhatsApp size={16} />
           Falar no WhatsApp

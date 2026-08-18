@@ -16,7 +16,7 @@ const { categoria } = Astro.props;
 const { nome, descricao } = categoria.data;
 
 const produtos = (await getCollection('produtos'))
-  .filter((produto) => produto.data.categoria === categoria.id)
+  .filter((produto) => produto.data.categoria.id === categoria.id)
   .sort((a, b) => a.data.ordem - b.data.ordem);
 
 const mensagem = `Olá! Gostaria de saber mais sobre a linha de ${nome} da Prisma Equipamentos.`;

@@ -16,7 +16,7 @@ const { produto } = Astro.props;
 const { nome, imagem, specs, aplicacao, categoria } = produto.data;
 const { Content } = await render(produto);
 
-const categoriaEntry = await getEntry('categorias', categoria);
+const categoriaEntry = await getEntry(categoria);
 
 const mensagem = `Olá! Vi a ${nome} no site e queria consultar o preço.`;
 ---

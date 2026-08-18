@@ -27,23 +27,83 @@ manager) sem alinhar antes.
 ## Modelo de conteúdo
 
 Definido em `src/content.config.ts` usando o **Content Layer** do Astro (loader `glob`
-de `astro/loaders`), lendo os arquivos em `src/content/`. Três coleções:
+de `astro/loaders`), lendo os arquivos em `src/content/`. Quatro coleções:
 
-- **produtos** (`src/content/produtos/*.mdoc`): `nome`, `categoria` (string — deve bater
-  com o `id`/nome do arquivo de uma categoria), `codigo?`, `imagem`, `specs` (lista de
-  strings), `aplicacao`, `destaque` (boolean, default `false`), `ordem` (number, default
-  `99`). Corpo em Markdoc.
+- **produtos** (`src/content/produtos/*.mdoc`): `nome`, `categoria` (**referência** —
+  `reference('categorias')`, ver "Referências entre coleções" abaixo), `codigo?`,
+  `imagem`, `specs` (lista de strings), `aplicacao`, `destaque` (boolean, default
+  `false`), `ordem` (number, default `99`). Corpo em Markdoc.
 - **categorias** (`src/content/categorias/*.mdoc`): `nome`, `descricao`, `imagem?`,
   `ordem`.
-- **cidades** (`src/content/cidades/*.mdoc`): `nome`, `estado` (default `'SP'`),
-  `metaTitle`, `metaDescription`, `segmentosFortes` (lista), `prazoEntrega`,
-  `referenciaLocal`, `ativa` (boolean, default `true`). Corpo em Markdoc.
+- **cidades** (`src/content/cidades/*.mdoc`): schema expandido para alimentar a
+  landing page de 9 seções (ver "Página de cidade — estrutura" abaixo): `nome`,
+  `estado` (default `'SP'`), `metaTitle`, `metaDescription`, `segmentosFortes` (lista),
+  `prazoEntrega`, `ativa` (boolean, default `true`), `heroTexto`, `provaRapida` (lista
+  de strings curtas, seção 1), `produtosDestaque` (lista de referências a `produtos`,
+  seção 4 — opcional, cai no fallback global de `destaque: true` se vazio), `faq`
+  (lista de `{ pergunta, resposta }`, seção 6), `depoimentoTexto?` / `depoimentoAutor?`
+  / `depoimentoEstabelecimento?` (seção 7 — a seção some do build se `depoimentoTexto`
+  estiver vazio). Corpo em Markdoc = seção 2 (reconhecimento do problema).
+- **regioes** (`src/content/regioes/*.mdoc`): `nome`, `metaTitle`, `metaDescription`,
+  `cidades` (lista de **referências** a `cidades` — ver abaixo), `ordem` (default `99`),
+  `ativa` (boolean, default `true`). Corpo em Markdoc = introdução da região. Uma região
+  **não é** uma cidade — é uma página de hub simples (`/regiao/[regiao]`) que agrupa e
+  linka para as páginas de cidade que a compõem, para reforço de SEO/linkagem interna.
 
 Imagens usam o schema `image()` do Astro e devem ficar em `src/assets/` — nunca URLs
 externas.
 
 O slug de cada entrada (usado nas rotas) é o nome do arquivo. Ex.: `campinas.mdoc` →
-`/campinas`; `faca-chef-tramontina.mdoc` → `/produto/faca-chef-tramontina`.
+`/campinas`; `faca-chef-tramontina.mdoc` → `/produto/faca-chef-tramontina`;
+`regiao-de-campinas.mdoc` → `/regiao/regiao-de-campinas`.
+
+### Referências entre coleções (relationship / multiRelationship)
+
+`produto.categoria` e `regiao.cidades` usam `reference()` do Astro (não `z.string()`) —
+no Keystatic isso é `fields.relationship()` (uma referência, ex. categoria de um
+produto) ou `fields.multiRelationship()` (várias, ex. cidades de uma região). Na UI do
+painel isso já aparece como uma lista suspensa/busca das entradas existentes da
+coleção referenciada — não precisou de nenhum campo extra além do tipo certo.
+
+⚠️ **Pegadinha ao ler esses campos no código**: o valor em `data.categoria` não é mais
+uma string, é um objeto `{ collection, id }`. Para resolver a entrada:
+- `getEntry(refObject)` (um argumento só) para uma referência única.
+- `getEntries(refArray)` para uma lista de referências (ex. `cidade.data.produtosDestaque`,
+  `regiao.data.cidades`).
+- Comparar com o `id` de outra entrada é `produto.data.categoria.id === categoria.id`,
+  nunca `produto.data.categoria === categoria.id`.
+
+## Página de cidade — estrutura (`src/pages/[cidade].astro`)
+
+A página de cada cidade segue uma landing page de 9 seções (não é mais um resumo
+genérico) — cada seção lê um campo específico do schema de `cidades` acima:
+
+1. **Hero** — eyebrow + h1 + `heroTexto` + 2 CTAs (orçamento / catálogo) + faixa de
+   `provaRapida`.
+2. **Reconhecimento do problema** — corpo Markdoc da entrada.
+3. **Categorias** — grid das categorias globais, cada uma com `descricao` real + CTA de
+   WhatsApp contextual por categoria.
+4. **Produtos em destaque** — `produtosDestaque` da cidade, ou fallback para os produtos
+   globais com `destaque: true`.
+5. **Como funciona** — 3 passos fixos (WhatsApp → orçamento → entrega/pós-venda), iguais
+   para todas as cidades — é uma sequência real, por isso mantém numeração (diferente
+   das seções "Segmentos atendidos" e "Por que a Prisma" da home, que são conjuntos, não
+   sequência, e por isso não numeram mais).
+6. **Objeções / FAQ** — `faq` em acordeão (`<details>`), só aparece se a lista não
+   estiver vazia.
+7. **Prova social** — depoimento condicional a `depoimentoTexto` não vazio. **Nunca
+   invente depoimento** — a seção some sozinha do build se o campo ficar vazio.
+8. **CTA final** — bloco de alto contraste.
+9. **Outras cidades** — links para as demais cidades `ativa: true`, para linkagem
+   interna (evita sinal de doorway page / página órfã).
+
+⚠️ **Mapeamento cidade → região é um chute do desenvolvimento, não confirmado pelo
+usuário.** As 8 regiões criadas (`src/content/regioes/`) agrupam as 18 novas cidades por
+proximidade geográfica aproximada. Casos incertos: Franco da Rocha ficou em "Região de
+Jundiaí / Itupeva" mas geograficamente está mais perto da Grande São Paulo; "Região de
+São João / Circuito das Águas" ficou sem nenhuma cidade (nenhuma das cidades pedidas se
+encaixa claramente nela — `cidades: []`, com corpo marcado `TODO`). **Revise esse
+agrupamento antes de marcar qualquer região como `ativa: true`.**
 
 ⚠️ **Por que `.mdoc` e não `.md`**: o campo de corpo do `keystatic.config.ts` usa
 `fields.markdoc`, que sempre grava em `.mdoc` — é o único tipo de campo do Keystatic que
@@ -159,11 +219,29 @@ copiada é penalizada pelo Google como doorway page — não gere cidades sem pr
 
 1. Pelo Keystatic (`/keystatic` → Cidades → Criar) ou direto em
    `src/content/cidades/<slug>.mdoc`.
-2. Preencha `metaTitle`/`metaDescription` únicos, `segmentosFortes`, `prazoEntrega`,
-   `referenciaLocal` reais para aquela cidade, e um corpo em markdown com conteúdo
-   específico daquela praça (não copie o texto de outra cidade).
-3. `ativa: true` faz a página aparecer no build; `ativa: false` a remove sem apagar o
-   arquivo.
+2. Preencha `metaTitle`/`metaDescription`, `segmentosFortes`, `prazoEntrega`,
+   `heroTexto`, `provaRapida` e `faq` com informação real e específica daquela cidade —
+   e um corpo em Markdoc com o reconhecimento do problema (seção 2), também específico
+   dessa praça (não copie o texto de outra cidade). `produtosDestaque` e o depoimento
+   (`depoimentoTexto`/`depoimentoAutor`/`depoimentoEstabelecimento`) são opcionais.
+3. **Só marque `ativa: true` quando a cidade tiver pelo menos três informações
+   verdadeiras e específicas sobre o atendimento ali** (ex.: prazo de entrega real,
+   frequência de visita real, um produto ou depoimento específico) — esse é o critério
+   do blueprint de landing page de cidade para evitar o risco de "doorway page". Os 18
+   arquivos criados na expansão de agosto/2026 estão todos como `ativa: false` e com
+   `TODO:` nos campos que ainda faltam preencher, exatamente por não atenderem esse
+   critério ainda.
+4. `ativa: false` remove a página do build sem apagar o arquivo — o conteúdo continua
+   editável no Keystatic até estar pronto para publicar.
+
+## Como adicionar uma região
+
+1. Pelo Keystatic (`/keystatic` → Regiões → Criar) ou direto em
+   `src/content/regioes/<slug>.mdoc`.
+2. `cidades` é uma lista de referências a entradas de `cidades` já existentes — escolha
+   pela lista suspensa do painel.
+3. Mesma regra de `ativa`: só publique quando o agrupamento de cidades estiver
+   confirmado e o corpo (introdução da região) tiver conteúdo real, não um `TODO`.
 
 ## Como adicionar um produto
 

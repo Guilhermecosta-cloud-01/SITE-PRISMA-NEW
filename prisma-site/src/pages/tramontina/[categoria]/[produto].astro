@@ -24,7 +24,7 @@ const mensagem = `Olá! Vi a ${nome} no site e queria consultar o preço.`;
 <Layout title={`${nome} | Tramontina | Prisma Equipamentos`} description={aplicacao}>
   <div class="mx-auto max-w-3xl px-5 py-10 md:px-14 md:py-16">
     {categoriaEntry && (
-      <p class="font-mono text-xs font-semibold uppercase tracking-[1.2px] text-[#6B7F94]">
+      <p class="font-mono text-xs font-semibold uppercase tracking-[1.2px] text-cinza">
         <a href="/tramontina" class="hover:text-[var(--color-accent)]">Tramontina</a>
         {' / '}
         <a href={`/tramontina/${categoriaEntry.id}`} class="hover:text-[var(--color-accent)]">
@@ -38,24 +38,24 @@ const mensagem = `Olá! Vi a ${nome} no site e queria consultar o preço.`;
       alt={nome}
       width={800}
       height={600}
-      class="mt-4 w-full rounded-md border border-cream-border object-cover"
+      class="mt-4 w-full rounded-md border border-cinza/30 object-cover"
     />
 
-    <h1 class="mt-6 font-display text-[32px] leading-tight text-navy-800 md:text-[42px]">{nome}</h1>
+    <h1 class="mt-6 font-display text-[32px] leading-tight text-navy md:text-[42px]">{nome}</h1>
 
-    <h2 class="mt-7 font-mono text-xs font-semibold uppercase tracking-[1.2px] text-[#6B7F94]">
+    <h2 class="mt-7 font-mono text-xs font-semibold uppercase tracking-[1.2px] text-cinza">
       Especificações
     </h2>
-    <ul class="mt-3 flex flex-col gap-1.5 font-sans text-[15px] text-navy-800">
+    <ul class="mt-3 flex flex-col gap-1.5 font-sans text-[15px] text-navy">
       {specs.map((spec) => <li>· {spec}</li>)}
     </ul>
 
-    <h2 class="mt-7 font-mono text-xs font-semibold uppercase tracking-[1.2px] text-[#6B7F94]">
+    <h2 class="mt-7 font-mono text-xs font-semibold uppercase tracking-[1.2px] text-cinza">
       Aplicação
     </h2>
-    <p class="mt-3 font-sans text-[15px] leading-relaxed text-[#5C6B7A]">{aplicacao}</p>
+    <p class="mt-3 font-sans text-[15px] leading-relaxed text-aco">{aplicacao}</p>
 
-    <div class="prose mt-6 font-sans text-[15px] leading-relaxed text-[#5C6B7A]">
+    <div class="prose mt-6 font-sans text-[15px] leading-relaxed text-aco">
       <Content />
     </div>
 

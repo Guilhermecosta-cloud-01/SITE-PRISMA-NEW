@@ -9,7 +9,7 @@
       "value": {
         "titulo": "Marcas que representamos",
         "subtitulo": "Nossas representadas",
-        "corFundo": "claro"
+        "corFundo": "papel"
       }
     },
     {
@@ -17,7 +17,7 @@
       "value": {
         "titulo": "Equipamos operações de todos os portes",
         "subtitulo": "Segmentos atendidos",
-        "corFundo": "claro"
+        "corFundo": "papel"
       }
     },
     {
@@ -25,7 +25,7 @@
       "value": {
         "titulo": "Suporte de quem entende de cozinha profissional",
         "subtitulo": "Por que a Prisma",
-        "corFundo": "escuro",
+        "corFundo": "areia",
         "itens": [
           {
             "titulo": "Um único contato para várias marcas",
@@ -51,7 +51,7 @@
       "value": {
         "titulo": "Pronto para equipar sua cozinha?",
         "texto": "Fale com a Prisma pelo WhatsApp e receba um orçamento personalizado para o seu negócio.",
-        "corFundo": "escuro",
+        "corFundo": "navy",
         "botaoTexto": "Pedir orçamento no WhatsApp",
         "botaoMensagemWhatsapp": "Olá! Vi o site da Prisma Equipamentos e gostaria de um orçamento."
       }

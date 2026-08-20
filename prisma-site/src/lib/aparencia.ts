@@ -1,31 +1,7 @@
 import dados from '../content/aparencia/aparencia.json';
+import { paraBlocos, type Bloco, type BlocoBruto } from './blocos';
 
-export type CorFundo = 'claro' | 'escuro' | 'branco';
-
-interface BlocoCampos {
-  titulo: string;
-  subtitulo?: string;
-  corFundo: CorFundo;
-  itens?: { titulo: string; descricao: string }[];
-  texto?: string;
-  botaoTexto?: string;
-  botaoMensagemWhatsapp?: string;
-  botaoLink?: string;
-}
-
-export type Bloco =
-  | ({ tipo: 'segmentos' } & BlocoCampos)
-  | ({ tipo: 'representadas' } & BlocoCampos)
-  | ({ tipo: 'cards' } & BlocoCampos & { itens: { titulo: string; descricao: string }[] })
-  | ({ tipo: 'cta' } & BlocoCampos & { texto: string; botaoTexto: string });
-
-// Formato bruto gravado pelo Keystatic para um campo fields.conditional (ver
-// node_modules/@keystatic/core .../form/api.d.ts — ConditionalField): cada
-// item do array vira { discriminant, value }, nunca um objeto plano.
-interface BlocoBruto {
-  discriminant: Bloco['tipo'];
-  value: Record<string, unknown>;
-}
+export type { CorFundo, Bloco } from './blocos';
 
 interface Aparencia {
   corDestaque: string;
@@ -57,7 +33,7 @@ const dadosBrutos = dados as AparenciaBruta;
 export const aparencia: Aparencia = {
   ...padrao,
   ...dadosBrutos,
-  blocos: (dadosBrutos.blocos ?? []).map((bloco) => ({ tipo: bloco.discriminant, ...bloco.value }) as Bloco),
+  blocos: paraBlocos(dadosBrutos.blocos),
 };
 
 function escurecer(hex: string, fator = 0.15): string {
@@ -74,4 +50,15 @@ function escurecer(hex: string, fator = 0.15): string {
   return `#${r}${g}${b}`;
 }
 
-export const corDestaqueHover = escurecer(aparencia.corDestaque);
+// Guia de cores: laranja (#D4703A) é só acento decorativo — texto branco em
+// cima dele fica abaixo do mínimo de contraste AA (3,4:1). Todo preenchimento
+// de botão usa a variante mais escura "laranja-cta" (4,6:1 com texto branco).
+// Quando a cor de destaque está no valor padrão da marca, usa o hex exato do
+// guia; se o usuário customizar `corDestaque` pelo Keystatic, deriva por
+// escurecimento (não há como saber o par "-cta" certo pra uma cor arbitrária).
+const LARANJA_CTA_PADRAO = '#B85A28';
+
+export const corDestaqueCta =
+  aparencia.corDestaque.toUpperCase() === '#D4703A' ? LARANJA_CTA_PADRAO : escurecer(aparencia.corDestaque, 0.18);
+
+export const corDestaqueCtaHover = escurecer(corDestaqueCta, 0.12);

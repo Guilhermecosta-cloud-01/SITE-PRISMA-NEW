@@ -13,7 +13,7 @@ const representadas = (await getCollection('representadas', ({ data }) => data.a
 
 const mensagemHero = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.';
 
-const marcadores = ['bg-navy-600', 'bg-cream-border', 'bg-[var(--color-accent)]'];
+const marcadores = ['bg-aco', 'bg-areia', 'bg-[var(--color-accent)]'];
 ---
 
 <Layout
@@ -21,29 +21,29 @@ const marcadores = ['bg-navy-600', 'bg-cream-border', 'bg-[var(--color-accent)]'
   description="Representante autorizado Tramontina Hospitality no interior de São Paulo. Utensílios e equipamentos profissionais para restaurantes, bares, hotéis e cozinhas industriais."
 >
   <!-- HERO -->
-  <section class="bg-navy-800">
+  <section class="bg-navy">
     <div
       class="mx-auto flex max-w-[1440px] flex-col gap-10 px-5 pb-14 pt-4 md:flex-row md:items-center md:gap-[70px] md:px-14 md:pb-16 md:pt-6"
     >
       <div class="flex-1 md:max-w-[600px]">
         <p
-          class="font-mono text-[11px] font-medium uppercase tracking-[1.3px] text-[#8FA8C1] md:text-xs md:tracking-[1.6px]"
+          class="font-mono text-[11px] font-medium uppercase tracking-[1.3px] text-areia/70 md:text-xs md:tracking-[1.6px]"
         >
           Representante autorizado Tramontina Food Service · Interior de SP
         </p>
         <h1
-          class="mt-3.5 font-display text-[35px] leading-[1.12] text-cream md:mt-5 md:text-[58px] md:leading-[1.08]"
+          class="mt-3.5 font-display text-[35px] leading-[1.12] text-areia md:mt-5 md:text-[58px] md:leading-[1.08]"
         >
           {aparencia.heroTitulo}
         </h1>
-        <p class="mt-4 font-sans text-[15px] leading-relaxed text-[#B9C8D6] md:mt-6 md:max-w-[470px] md:text-lg">
+        <p class="mt-4 font-sans text-[15px] leading-relaxed text-areia/90 md:mt-6 md:max-w-[470px] md:text-lg">
           {aparencia.heroTexto}
         </p>
         <div class="mt-7 flex flex-col gap-3 md:mt-9 md:flex-row md:items-center">
           <BotaoWhatsApp mensagem={mensagemHero} texto="Pedir orçamento no WhatsApp" class="w-full md:w-auto" />
           <a
             href="/representadas"
-            class="inline-flex items-center justify-center rounded border border-navy-600 px-6 py-3.5 font-sans text-[15.5px] font-semibold text-cream transition-colors hover:border-cream hover:bg-white/5"
+            class="inline-flex items-center justify-center rounded border border-aco px-6 py-3.5 font-sans text-[15.5px] font-semibold text-areia transition-colors hover:border-areia hover:bg-white/5"
           >
             Ver representadas
           </a>
@@ -51,7 +51,7 @@ const marcadores = ['bg-navy-600', 'bg-cream-border', 'bg-[var(--color-accent)]'
       </div>
 
       <div class="flex-1 md:max-w-[520px]">
-        <div class="relative overflow-hidden rounded-md border border-white/8 bg-navy-700 p-6 md:p-9">
+        <div class="relative overflow-hidden rounded-md border border-white/8 bg-navy p-6 md:p-9">
           <div
             class="pointer-events-none absolute inset-0"
             style="background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0px,rgba(255,255,255,.035) 2px,transparent 2px,transparent 26px)"
@@ -77,7 +77,7 @@ const marcadores = ['bg-navy-600', 'bg-cream-border', 'bg-[var(--color-accent)]'
                 style={`animation:prisma-chip-in 480ms ease-out ${700 + i * 85}ms forwards`}
               >
                 <span class={`h-[18px] w-[3px] shrink-0 ${marcadores[i % 3]}`}></span>
-                <span class="font-sans text-[15.5px] text-cream">{representada.data.nome}</span>
+                <span class="font-sans text-[15.5px] text-areia">{representada.data.nome}</span>
               </li>
             ))}
           </ul>

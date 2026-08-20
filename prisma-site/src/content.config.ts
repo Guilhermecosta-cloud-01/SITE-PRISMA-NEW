@@ -50,6 +50,18 @@ const cidades = defineCollection({
       // vazio, a página cai no conjunto global de produtos com destaque:true)
       produtosDestaque: z.array(reference('produtos')).default([]),
 
+      // Blocos extras (mesmo mecanismo do singleton Aparência — ver src/lib/blocos.ts),
+      // renderizados entre "Produtos em destaque" e "Como funciona". Por padrão vem
+      // com um bloco de Representadas (ver script de seed em src/content/cidades/*.mdoc).
+      blocos: z
+        .array(
+          z.object({
+            discriminant: z.enum(['segmentos', 'representadas', 'cards', 'cta']),
+            value: z.record(z.string(), z.unknown()),
+          }),
+        )
+        .default([]),
+
       // Seção 6 — objeções / FAQ
       faq: z
         .array(

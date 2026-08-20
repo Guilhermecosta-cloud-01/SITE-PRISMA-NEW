@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFlutuante from '../components/WhatsAppFlutuante.astro';
-import { aparencia, corDestaqueHover } from '../lib/aparencia';
+import { aparencia, corDestaqueCta, corDestaqueCtaHover } from '../lib/aparencia';
 import '../styles/global.css';
 
 interface Props {
@@ -34,7 +34,7 @@ const localBusinessJsonLd = {
 <!doctype html>
 <html
   lang="pt-BR"
-  style={`--color-accent: ${aparencia.corDestaque}; --color-accent-hover: ${corDestaqueHover}`}
+  style={`--color-accent: ${aparencia.corDestaque}; --color-accent-cta: ${corDestaqueCta}; --color-accent-cta-hover: ${corDestaqueCtaHover}`}
 >
   <head>
     <meta charset="utf-8" />
@@ -54,7 +54,7 @@ const localBusinessJsonLd = {
 
     <script type="application/ld+json" set:html={JSON.stringify(localBusinessJsonLd)} />
   </head>
-  <body class="min-h-screen flex flex-col bg-cream text-navy-800">
+  <body class="min-h-screen flex flex-col bg-papel text-navy">
     <Header />
     <main class="flex-1">
       <slot />

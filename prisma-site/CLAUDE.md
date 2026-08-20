@@ -140,6 +140,9 @@ genérico) — cada seção lê um campo específico do schema de `cidades` acim
    produto Tramontina, não sobre as outras representadas.
 4. **Produtos em destaque** — `produtosDestaque` da cidade, ou fallback para os produtos
    globais com `destaque: true`.
+
+   *(entre a seção 4 e a 5 entram os **blocos** editáveis da cidade — por padrão um
+   grid de Representadas; ver "Blocos da home e da cidade" abaixo)*
 5. **Como funciona** — 3 passos fixos (WhatsApp → orçamento → entrega/pós-venda), iguais
    para todas as cidades — é uma sequência real, por isso mantém numeração (diferente
    das seções "Segmentos atendidos" e "Por que a Prisma" da home, que são conjuntos, não
@@ -173,14 +176,35 @@ Keystatic também não vai reconhecê-lo como a mesma entrada ao editar.
 Design importado do Claude Design (mockup `Prisma Equipamentos.dc.html`) e implementado
 em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.astro`.
 
-- **Cores** (tokens Tailwind via `@theme` em `global.css`):
-  `navy-900` `#132840` (rodapé), `navy-800` `#1b3556` (header/hero/seções escuras),
-  `navy-700` `#21406b` (painel do hero), `navy-600` `#4a6e92` (bordas em fundo escuro),
-  `cream` `#f7f5f2` (fundo claro / texto sobre fundo escuro), `cream-border` `#e6e0d4`
-  (borda de card em fundo claro). A cor de destaque (laranja `#D4703A` por padrão) **não**
-  é um token fixo — continua vindo do singleton "Aparência" via `--color-accent` (ver
-  seção abaixo), só que agora com o laranja da marca como valor padrão em vez do verde
-  genérico do MVP.
+- **Cores** — desde agosto/2026 segue o **guia de cores Prisma** à risca (documento
+  fornecido pelo usuário; qualquer decisão de cor nova volta a ele, não a gosto pessoal).
+  Tokens Tailwind via `@theme` em `global.css`:
+  - `navy` `#1B3556` — estrutura, títulos, no máximo **duas** seções de fundo por
+    página (normalmente hero + CTA final), **nunca** duas seções navy coladas.
+  - `aco` `#4A6E92` — texto de apoio (corpo em fundo claro), bordas, hover.
+  - `areia` `#E4DCCF` — fundo de seção alternada (o "respiro" entre navys).
+  - `papel` `#FBFAF8` — fundo de leitura padrão (header, footer e a maioria das
+    seções claras).
+  - `verde` `#5C7A62` — só confirmação/garantia/selo (ex.: "nota fiscal e garantia
+    de fábrica"). **Nunca** em botão.
+  - `cinza` `#8E8E8E` — só legenda/metadado/divisor (eyebrow em caixa alta, rodapé,
+    código de produto). **Nunca** texto de corpo.
+  - A cor de destaque (laranja) **não** é um token Tailwind fixo — continua vindo do
+    singleton "Aparência" via CSS vars dinâmicas injetadas em `Layout.astro`:
+    `--color-accent` (decorativo — ícone, borda, sublinhado de link ativo;
+    **nunca** fundo de botão) e `--color-accent-cta` (preenchimento de botão —
+    default `#B85A28`, a única combinação com texto branco que passa AA; branco
+    sobre o laranja decorativo `#D4703A` reprova em 3,4:1). Ver `src/lib/aparencia.ts`
+    (`corDestaqueCta`/`corDestaqueCtaHover`) — se o usuário customizar `corDestaque`
+    no Keystatic para uma cor fora do padrão, a variante de botão é derivada por
+    escurecimento, não fica idêntica ao guia.
+  - **Ritmo de seções**: alterne `papel`/`areia` entre as âncoras `navy` — nunca
+    duas seções escuras seguidas. Ver `src/components/BlocoRenderer.astro` (mapa
+    `corFundo`) e a estrutura de `[cidade].astro` (hero e CTA final são as duas
+    âncoras navy da página; "Como funciona" e "Prova social" usam `areia`).
+  - Antes de mudar cor de qualquer coisa, faça a auditoria do guia: no máx. 2 navy
+    por página, nunca coladas; laranja só em elemento clicável (máx. 3 por tela);
+    nenhum botão verde; texto de corpo nunca em cinza.
 - **Tipografia**: `League Gothic` (títulos grandes / wordmark, classe `font-display`),
   `Public Sans` (texto e UI, classe `font-sans`, padrão do `body`), `IBM Plex Mono`
   (rótulos "eyebrow" em caixa alta, classe `font-mono`). Os três `.woff2` estão
@@ -288,6 +312,9 @@ copiada é penalizada pelo Google como doorway page — não gere cidades sem pr
    critério ainda.
 4. `ativa: false` remove a página do build sem apagar o arquivo — o conteúdo continua
    editável no Keystatic até estar pronto para publicar.
+5. Toda cidade nova recebe (ou deveria receber, se criada fora do Keystatic) um bloco
+   `representadas` em `blocos` — ver "Blocos da home e da cidade" abaixo. Editável por
+   cidade, não precisa ser igual em todas.
 
 ## Como adicionar uma região
 
@@ -332,46 +359,60 @@ gravado em `src/content/aparencia/aparencia.json` e lido por `src/lib/aparencia.
 (com valores padrão de fallback caso o arquivo não exista). Ele controla, sem precisar
 editar nenhum componente:
 
-- **Cor de destaque** (`corDestaque`, hex) — aplicada via variável CSS `--color-accent`,
-  injetada uma vez no `<html>` do `Layout.astro`. Todo botão que deveria usar a cor de
-  destaque usa a classe Tailwind `bg-[var(--color-accent)]` em vez de uma cor fixa (ex.:
-  `BotaoWhatsApp.astro`, `WhatsAppFlutuante.astro`, `CardProduto.astro`) — assim a cor
-  muda no site inteiro a partir de um único campo no painel.
+- **Cor de destaque** (`corDestaque`, hex) — aplicada via três variáveis CSS injetadas
+  uma vez no `<html>` do `Layout.astro`: `--color-accent` (decorativo), `--color-accent-cta`
+  e `--color-accent-cta-hover` (preenchimento de botão — ver guia de cores acima). Todo
+  botão de ação usa `bg-[var(--color-accent-cta)]` (ex.: `BotaoWhatsApp.astro`,
+  `WhatsAppFlutuante.astro`, `Header.astro`) — nunca `--color-accent` puro como fundo de
+  botão. Muda a cor do site inteiro a partir de um único campo no painel.
 - **Título e texto do hero** da home (`heroTitulo`, `heroTexto`).
 - **Linha extra do rodapé** (`textoRodapeExtra`), opcional.
 - **Blocos da home** (`blocos`) — ver seção seguinte.
 
-### Blocos da home (page builder via Keystatic)
+### Blocos da home e da cidade (page builder via Keystatic)
 
-O corpo da home (tudo abaixo do hero, que continua fixo/codificado em `index.astro`) é
-uma lista de blocos editável em `/keystatic` → Aparência → "Blocos da home":
+O corpo da home (tudo abaixo do hero, que continua fixo/codificado em `index.astro`) e
+um trecho da página de cidade (entre "Produtos em destaque" e "Como funciona", ver
+`[cidade].astro`) são uma lista de blocos editável pelo Keystatic — em Aparência →
+"Blocos da home", ou por cidade em Cidades → `<cidade>` → "Blocos da cidade":
 **arrastar para reordenar, adicionar, remover e escolher a cor de fundo de cada bloco**,
 sem tocar em código. É construído com o mecanismo nativo do Keystatic para isso —
-`fields.array(fields.conditional(...))` — não trouxe nenhuma dependência nova.
+`fields.array(fields.conditional(...))`, fatorado em `blocosField()` no
+`keystatic.config.ts` e reutilizado nos dois lugares — não trouxe nenhuma dependência
+nova.
 
-Tipos de bloco disponíveis (o discriminante fica em `bloco.tipo` depois de lido por
-`src/lib/aparencia.ts`):
+Tipos/campos e leitura são compartilhados entre home e cidade via `src/lib/blocos.ts`
+(`Bloco`, `CorFundo`, `paraBlocos()`); `src/lib/aparencia.ts` usa isso para o singleton,
+`[cidade].astro` chama `paraBlocos(cidade.data.blocos)` direto. Tipos de bloco
+disponíveis (o discriminante fica em `bloco.tipo` depois de `paraBlocos()`):
 - `segmentos` — grid da coleção `segmentos` (título/subtítulo + cor de fundo).
 - `representadas` — grid da coleção `representadas` (título/subtítulo + cor de fundo).
+  **Todas as 20 páginas de cidade já vêm com um bloco desse por padrão** (seed feito em
+  agosto/2026, editável/removível por cidade no Keystatic).
 - `cards` — lista de cards manuais (`itens: {titulo, descricao}[]`) — usado hoje para
-  "Por que a Prisma".
+  "Por que a Prisma" na home.
 - `cta` — chamada para ação: texto + botão que abre WhatsApp (`botaoMensagemWhatsapp`)
   **ou** navega para uma página interna (`botaoLink`, ex. `/area-de-atendimento`) —
   preencha só um dos dois.
 
-`corFundo` é sempre um select fechado (`claro` / `escuro` / `branco`), nunca hex livre —
-de propósito, pra não dar pra quebrar o contraste do texto (que já é fixo por tom em
-`BlocoRenderer.astro`: fundo escuro = texto creme, claro/branco = texto navy).
+`corFundo` é sempre um select fechado (`papel` / `areia` / `navy`, ver guia de cores),
+nunca hex livre — de propósito, pra não dar pra quebrar o contraste do texto (fixo por
+tom em `BlocoRenderer.astro`) nem o limite de "no máx. 2 navy por página, nunca
+coladas".
 
-⚠️ **Formato bruto no JSON**: um campo `fields.conditional` do Keystatic grava cada item
-como `{ discriminant: "tipo", value: { ...campos } }`, não um objeto plano — ver o
-comentário em `src/lib/aparencia.ts` (`BlocoBruto`) antes de mexer nesse arquivo à mão.
+⚠️ **Formato bruto no JSON/frontmatter**: um campo `fields.conditional` do Keystatic
+grava cada item como `{ discriminant: "tipo", value: { ...campos } }`, não um objeto
+plano — ver o comentário em `src/lib/blocos.ts` (`BlocoBruto`) antes de mexer nesses
+arquivos à mão. Em `cidades`, o campo correspondente no Zod (`content.config.ts`) é
+tipado igual (`{ discriminant, value: Record<string, unknown> }`), sem achatar — quem
+achata pra `{tipo, ...}` é sempre `paraBlocos()`.
 
-⚠️ **Escopo atual**: só a home usa blocos. As páginas de cidade e de representada
-continuam com estrutura fixa em componente (o usuário pediu explicitamente "page
-builder completo"; a versão viável dentro da stack combinada — sem trazer um editor
-visual externo — é esse mecanismo de blocos do Keystatic. Aplicar o mesmo padrão a
-outras páginas é factível, mas não foi feito nesta rodada).
+⚠️ **Escopo atual**: home e cidade usam blocos; representada e demais páginas continuam
+com estrutura fixa em componente (o usuário pediu "page builder completo"; a versão
+viável dentro da stack combinada — sem trazer um editor visual externo — é esse
+mecanismo de blocos do Keystatic). Estender a outras páginas é só repetir o padrão:
+campo `blocos` no schema da coleção + `blocosField(label)` no Keystatic + `paraBlocos()`
++ `<BlocoRenderer>` na página.
 
 ## Regras invioláveis
 

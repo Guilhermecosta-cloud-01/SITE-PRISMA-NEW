@@ -22,13 +22,13 @@ const mensagem = `Olá! Gostaria de receber o ${nomeCatalogo}.`;
 ---
 
 <Layout title={`${nome} | Prisma Equipamentos`} description={descricaoCurta}>
-  <section class="bg-navy-800 px-5 py-12 md:px-14 md:py-16">
+  <section class="bg-navy px-5 py-12 md:px-14 md:py-16">
     <div class="mx-auto max-w-[1440px]">
-      <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-[#8FA8C1] md:text-xs">
+      <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-areia/70 md:text-xs">
         {segmento}
       </p>
-      <h1 class="mt-3 max-w-2xl font-display text-[32px] leading-tight text-cream md:text-[46px]">{nome}</h1>
-      <p class="mt-4 max-w-xl font-sans text-[15px] leading-relaxed text-[#B9C8D6] md:text-lg">{descricaoCurta}</p>
+      <h1 class="mt-3 max-w-2xl font-display text-[32px] leading-tight text-areia md:text-[46px]">{nome}</h1>
+      <p class="mt-4 max-w-xl font-sans text-[15px] leading-relaxed text-areia/90 md:text-lg">{descricaoCurta}</p>
       <div class="mt-7">
         <BotaoWhatsApp mensagem={mensagem} texto="Solicitar catálogo no WhatsApp" class="w-full md:w-auto" />
       </div>
@@ -36,7 +36,7 @@ const mensagem = `Olá! Gostaria de receber o ${nomeCatalogo}.`;
   </section>
 
   <div class="mx-auto max-w-3xl px-5 py-10 md:px-14 md:py-16">
-    <div class="prose font-sans text-[15px] leading-relaxed text-[#5C6B7A]">
+    <div class="prose font-sans text-[15px] leading-relaxed text-aco">
       <Content />
     </div>
 

@@ -33,13 +33,17 @@
 }
 
 @theme {
-  /* Paleta da identidade visual da Prisma Equipamentos */
-  --color-navy-900: #132840;
-  --color-navy-800: #1b3556;
-  --color-navy-700: #21406b;
-  --color-navy-600: #4a6e92;
-  --color-cream: #f7f5f2;
-  --color-cream-border: #e6e0d4;
+  /* Paleta da identidade visual da Prisma Equipamentos — ver guia-de-cores-prisma
+     (documentado em CLAUDE.md, seção "Identidade visual"). A cor de destaque
+     (laranja/laranja-cta) NÃO entra aqui como token estático — continua vindo do
+     singleton "Aparência" via CSS var dinâmica (--color-accent / --color-accent-cta),
+     ver src/lib/aparencia.ts e src/layouts/Layout.astro. */
+  --color-navy: #1b3556;
+  --color-aco: #4a6e92;
+  --color-areia: #e4dccf;
+  --color-papel: #fbfaf8;
+  --color-verde: #5c7a62;
+  --color-cinza: #8e8e8e;
 
   --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'League Gothic', ui-sans-serif, sans-serif;

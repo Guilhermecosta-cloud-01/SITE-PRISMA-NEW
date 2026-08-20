@@ -28,19 +28,19 @@ const mensagemCatalogo = `Olá! Vi ${nome} no site e gostaria de receber o ${nom
 
 <Layout title={`${nome} | Tramontina | Prisma Equipamentos`} description={descricao}>
   <div class="mx-auto max-w-[1440px] px-5 py-10 md:px-14 md:py-16">
-    <p class="font-mono text-xs font-semibold uppercase tracking-[1.2px] text-[#6B7F94]">
+    <p class="font-mono text-xs font-semibold uppercase tracking-[1.2px] text-cinza">
       <a href="/tramontina" class="hover:text-[var(--color-accent)]">Tramontina</a>
     </p>
-    <h1 class="mt-2 font-display text-[32px] leading-tight text-navy-800 md:text-[42px]">{nome}</h1>
-    <p class="mt-3 max-w-2xl font-sans text-[15px] leading-relaxed text-[#5C6B7A] md:text-lg">{descricao}</p>
+    <h1 class="mt-2 font-display text-[32px] leading-tight text-navy md:text-[42px]">{nome}</h1>
+    <p class="mt-3 max-w-2xl font-sans text-[15px] leading-relaxed text-aco md:text-lg">{descricao}</p>
 
     {produtos.length > 0 ? (
       <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12 md:grid-cols-3 md:gap-6">
         {produtos.map((produto) => <CardProduto produto={produto} />)}
       </div>
     ) : (
-      <div class="mt-8 rounded-md border border-cream-border bg-white p-6 md:mt-12 md:p-8">
-        <p class="font-sans text-[15px] text-[#5C6B7A]">
+      <div class="mt-8 rounded-md border border-cinza/30 bg-papel p-6 md:mt-12 md:p-8">
+        <p class="font-sans text-[15px] text-aco">
           Ainda não publicamos produtos dessa linha no site. Fale com a gente no WhatsApp para consultar o que
           temos disponível.
         </p>
@@ -48,10 +48,10 @@ const mensagemCatalogo = `Olá! Vi ${nome} no site e gostaria de receber o ${nom
       </div>
     )}
 
-    <div class="mt-10 flex flex-col gap-3 rounded-md border border-cream-border bg-white p-6 md:mt-14 md:flex-row md:items-center md:justify-between md:p-8">
+    <div class="mt-10 flex flex-col gap-3 rounded-md border border-cinza/30 bg-papel p-6 md:mt-14 md:flex-row md:items-center md:justify-between md:p-8">
       <div>
-        <h2 class="font-sans text-base font-bold text-navy-800 md:text-lg">Quer ver a linha completa?</h2>
-        <p class="mt-1 font-sans text-sm text-[#5C6B7A]">
+        <h2 class="font-sans text-base font-bold text-navy md:text-lg">Quer ver a linha completa?</h2>
+        <p class="mt-1 font-sans text-sm text-aco">
           Peça o {nomeCatalogo} direto no WhatsApp, com todos os itens dessa linha.
         </p>
       </div>

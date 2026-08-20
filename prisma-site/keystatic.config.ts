@@ -25,13 +25,90 @@ const storage: import('@keystatic/core').Config['storage'] =
 // texto, que já é fixo por tom (claro/branco = texto navy, escuro = texto creme).
 const corFundoField = fields.select({
   label: 'Fundo',
+  description:
+    'Alterne entre seções — nunca duas seguidas em "Navy (escuro)". Papel é o padrão de leitura, Areia é o respiro de seção alternada.',
   options: [
-    { label: 'Claro (creme)', value: 'claro' },
-    { label: 'Escuro (azul-marinho)', value: 'escuro' },
-    { label: 'Branco', value: 'branco' },
+    { label: 'Papel (claro, padrão)', value: 'papel' },
+    { label: 'Areia (claro, alternado)', value: 'areia' },
+    { label: 'Navy (escuro — no máx. 2 por página)', value: 'navy' },
   ],
-  defaultValue: 'claro',
+  defaultValue: 'papel',
 });
+
+// Mecanismo de "blocos" reutilizado pelo singleton Aparência (home) e pela
+// coleção Cidades (ver src/lib/blocos.ts para o tipo TS espelhando isso, e
+// CLAUDE.md "Blocos da home / da cidade" para o porquê do formato bruto
+// { discriminant, value } no JSON/frontmatter — é o jeito que o Keystatic
+// grava fields.conditional, não é um objeto plano).
+function blocosField(label: string) {
+  return fields.array(
+    fields.conditional(
+      fields.select({
+        label: 'Tipo de bloco',
+        options: [
+          { label: 'Segmentos atendidos (grid)', value: 'segmentos' },
+          { label: 'Representadas (grid)', value: 'representadas' },
+          { label: 'Cards de destaque', value: 'cards' },
+          { label: 'Chamada para ação (CTA)', value: 'cta' },
+        ],
+        defaultValue: 'segmentos',
+      }),
+      {
+        segmentos: fields.object({
+          titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
+          subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
+          corFundo: corFundoField,
+        }),
+        representadas: fields.object({
+          titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
+          subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
+          corFundo: corFundoField,
+        }),
+        cards: fields.object({
+          titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
+          subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
+          corFundo: corFundoField,
+          itens: fields.array(
+            fields.object({
+              titulo: fields.text({ label: 'Título', validation: { isRequired: true } }),
+              descricao: fields.text({
+                label: 'Descrição',
+                multiline: true,
+                validation: { isRequired: true },
+              }),
+            }),
+            {
+              label: 'Itens',
+              itemLabel: (props) => props.fields.titulo.value || 'Item',
+            },
+          ),
+        }),
+        cta: fields.object({
+          titulo: fields.text({ label: 'Título', validation: { isRequired: true } }),
+          texto: fields.text({ label: 'Texto', multiline: true, validation: { isRequired: true } }),
+          corFundo: corFundoField,
+          botaoTexto: fields.text({ label: 'Texto do botão', validation: { isRequired: true } }),
+          botaoMensagemWhatsapp: fields.text({
+            label: 'Mensagem do WhatsApp',
+            description: 'Preencha se o botão deve abrir o WhatsApp com essa mensagem',
+            multiline: true,
+          }),
+          botaoLink: fields.text({
+            label: 'Link interno',
+            description:
+              'Preencha em vez da mensagem de WhatsApp se o botão deve levar a uma página do site (ex.: /area-de-atendimento)',
+          }),
+        }),
+      },
+    ),
+    {
+      label,
+      description:
+        'Arraste para reordenar, adicione ou remova blocos para montar a página. A seção de hero não é um bloco — fica sempre fixa no topo.',
+      itemLabel: (props) => props.discriminant,
+    },
+  );
+}
 
 export default config({
   storage,
@@ -60,73 +137,7 @@ export default config({
           label: 'Linha extra no rodapé',
           description: 'Opcional — ex. endereço, horário de atendimento',
         }),
-        blocos: fields.array(
-          fields.conditional(
-            fields.select({
-              label: 'Tipo de bloco',
-              options: [
-                { label: 'Segmentos atendidos (grid)', value: 'segmentos' },
-                { label: 'Representadas (grid)', value: 'representadas' },
-                { label: 'Cards de destaque', value: 'cards' },
-                { label: 'Chamada para ação (CTA)', value: 'cta' },
-              ],
-              defaultValue: 'segmentos',
-            }),
-            {
-              segmentos: fields.object({
-                titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
-                subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
-                corFundo: corFundoField,
-              }),
-              representadas: fields.object({
-                titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
-                subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
-                corFundo: corFundoField,
-              }),
-              cards: fields.object({
-                titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
-                subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
-                corFundo: corFundoField,
-                itens: fields.array(
-                  fields.object({
-                    titulo: fields.text({ label: 'Título', validation: { isRequired: true } }),
-                    descricao: fields.text({
-                      label: 'Descrição',
-                      multiline: true,
-                      validation: { isRequired: true },
-                    }),
-                  }),
-                  {
-                    label: 'Itens',
-                    itemLabel: (props) => props.fields.titulo.value || 'Item',
-                  },
-                ),
-              }),
-              cta: fields.object({
-                titulo: fields.text({ label: 'Título', validation: { isRequired: true } }),
-                texto: fields.text({ label: 'Texto', multiline: true, validation: { isRequired: true } }),
-                corFundo: corFundoField,
-                botaoTexto: fields.text({ label: 'Texto do botão', validation: { isRequired: true } }),
-                botaoMensagemWhatsapp: fields.text({
-                  label: 'Mensagem do WhatsApp',
-                  description: 'Preencha se o botão deve abrir o WhatsApp com essa mensagem',
-                  multiline: true,
-                }),
-                botaoLink: fields.text({
-                  label: 'Link interno',
-                  description:
-                    'Preencha em vez da mensagem de WhatsApp se o botão deve levar a uma página do site (ex.: /area-de-atendimento)',
-                }),
-              }),
-            },
-          ),
-          {
-            label: 'Blocos da home',
-            description:
-              'Arraste para reordenar, adicione ou remova blocos para montar a página. A seção de hero não é um bloco — fica sempre fixa no topo.',
-            itemLabel: (props) => props.discriminant,
-          },
-        ),
+        blocos: blocosField('Blocos da home'),
       },
     }),
   },
@@ -238,6 +249,8 @@ export default config({
           collection: 'produtos',
           description: 'Opcional — se vazio, usa os produtos com "Destaque" marcado globalmente',
         }),
+
+        blocos: blocosField('Blocos da cidade'),
 
         faq: fields.array(
           fields.object({

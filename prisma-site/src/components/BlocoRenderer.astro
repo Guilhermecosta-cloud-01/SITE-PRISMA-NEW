@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import type { Bloco, CorFundo } from '../lib/aparencia';
+import type { Bloco, CorFundo } from '../lib/blocos';
 import CardSegmento from './CardSegmento.astro';
 import CardRepresentada from './CardRepresentada.astro';
 import BotaoWhatsApp from './BotaoWhatsApp.astro';
@@ -11,10 +11,14 @@ interface Props {
 
 const { bloco } = Astro.props;
 
+// Guia de cores: alterne fundo claro/escuro entre seções, nunca duas seções
+// navy coladas (ver CLAUDE.md, seção "Guia de cores"). `papel` é o padrão de
+// leitura, `areia` é o respiro de seção alternada, `navy` é a âncora escura
+// (no máximo duas por página).
 const fundos: Record<CorFundo, { secao: string; eyebrow: string; titulo: string; texto: string }> = {
-  claro: { secao: 'bg-cream', eyebrow: 'text-[#6B7F94]', titulo: 'text-navy-800', texto: 'text-[#5C6B7A]' },
-  branco: { secao: 'bg-white', eyebrow: 'text-[#6B7F94]', titulo: 'text-navy-800', texto: 'text-[#5C6B7A]' },
-  escuro: { secao: 'bg-navy-800', eyebrow: 'text-[#8FA8C1]', titulo: 'text-cream', texto: 'text-[#B9C8D6]' },
+  papel: { secao: 'bg-papel', eyebrow: 'text-cinza', titulo: 'text-navy', texto: 'text-aco' },
+  areia: { secao: 'bg-areia', eyebrow: 'text-cinza', titulo: 'text-navy', texto: 'text-navy/80' },
+  navy: { secao: 'bg-navy', eyebrow: 'text-areia/70', titulo: 'text-areia', texto: 'text-areia/90' },
 };
 const cor = fundos[bloco.corFundo];
 
@@ -58,7 +62,7 @@ const representadas =
           <div
             class:list={[
               'flex flex-col gap-2 py-5 md:gap-3.5 md:py-0',
-              i === 0 ? 'md:pr-7' : 'border-t border-white/14 md:border-t-0 md:border-l md:px-7',
+              i === 0 ? 'md:pr-7' : 'border-t border-cinza/25 md:border-t-0 md:border-l md:px-7',
               i === bloco.itens.length - 1 && 'md:pl-7 md:pr-0',
             ]}
           >
@@ -77,7 +81,7 @@ const representadas =
         ) : bloco.botaoLink ? (
           <a
             href={bloco.botaoLink}
-            class="inline-flex w-full items-center justify-center rounded bg-[var(--color-accent)] px-6 py-3.5 font-sans text-[15px] font-semibold text-cream transition-colors hover:bg-[var(--color-accent-hover)] md:w-auto"
+            class="inline-flex w-full items-center justify-center rounded bg-[var(--color-accent-cta)] px-6 py-3.5 font-sans text-[15px] font-semibold text-papel transition-colors hover:bg-[var(--color-accent-cta-hover)] md:w-auto"
           >
             {bloco.botaoTexto}
           </a>

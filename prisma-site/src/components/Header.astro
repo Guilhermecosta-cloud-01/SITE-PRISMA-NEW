@@ -12,7 +12,7 @@ const links = [
 ];
 ---
 
-<header class="sticky top-0 z-50 bg-navy-800 shadow-[0_1px_0_rgba(255,255,255,0.08)]">
+<header class="sticky top-0 z-50 bg-papel shadow-[0_1px_0_rgba(0,0,0,0.08)]">
   <div class="max-w-[1440px] mx-auto flex items-center justify-between px-5 py-4 md:px-14 md:py-6">
     <a href="/" aria-label="Prisma Equipamentos — início">
       <span class="md:hidden">
@@ -27,7 +27,7 @@ const links = [
       {links.map((link) => (
         <a
           href={link.href}
-          class="font-sans text-[14.5px] text-[#C3D1DD] hover:text-cream transition-colors"
+          class="font-sans text-[14.5px] text-navy hover:text-aco transition-colors"
         >
           {link.label}
         </a>
@@ -36,7 +36,7 @@ const links = [
         href={linkWhatsApp(mensagem)}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 rounded bg-[var(--color-accent)] px-5 py-2.5 font-sans text-sm font-semibold text-cream shadow-sm transition-colors hover:bg-[var(--color-accent-hover)]"
+        class="inline-flex items-center gap-2 rounded bg-[var(--color-accent-cta)] px-5 py-2.5 font-sans text-sm font-semibold text-papel shadow-sm transition-colors hover:bg-[var(--color-accent-cta-hover)]"
       >
         <IconWhatsApp size={16} />
         Falar no WhatsApp
@@ -46,17 +46,17 @@ const links = [
     <details class="md:hidden group">
       <summary class="list-none p-3.5 -m-3.5 flex items-center cursor-pointer">
         <svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true">
-          <rect width="22" height="2" fill="#C3D1DD"></rect>
-          <rect y="6" width="22" height="2" fill="#C3D1DD"></rect>
-          <rect y="12" width="22" height="2" fill="#C3D1DD"></rect>
+          <rect width="22" height="2" fill="#1B3556"></rect>
+          <rect y="6" width="22" height="2" fill="#1B3556"></rect>
+          <rect y="12" width="22" height="2" fill="#1B3556"></rect>
         </svg>
         <span class="sr-only">Menu</span>
       </summary>
-      <nav class="absolute inset-x-0 top-full flex flex-col gap-1 border-t border-white/10 bg-navy-800 px-5 pb-5 pt-3 shadow-lg">
+      <nav class="absolute inset-x-0 top-full flex flex-col gap-1 border-t border-cinza/20 bg-papel px-5 pb-5 pt-3 shadow-lg">
         {links.map((link) => (
           <a
             href={link.href}
-            class="font-sans text-[15px] text-[#C3D1DD] py-2"
+            class="font-sans text-[15px] text-navy py-2"
           >
             {link.label}
           </a>
@@ -65,7 +65,7 @@ const links = [
           href={linkWhatsApp(mensagem)}
           target="_blank"
           rel="noopener noreferrer"
-          class="mt-2 inline-flex items-center justify-center gap-2 rounded bg-[var(--color-accent)] px-5 py-2.5 font-sans text-sm font-semibold text-cream"
+          class="mt-2 inline-flex items-center justify-center gap-2 rounded bg-[var(--color-accent-cta)] px-5 py-2.5 font-sans text-sm font-semibold text-papel"
         >
           <IconWhatsApp size={16} />
           Falar no WhatsApp

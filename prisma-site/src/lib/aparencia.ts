@@ -36,10 +36,21 @@ export const aparencia: Aparencia = {
   blocos: paraBlocos(dadosBrutos.blocos),
 };
 
+function normalizarHex(hex: string): string | null {
+  const limpo = hex.trim();
+  const curto = /^#?([0-9a-f]{3})$/i.exec(limpo);
+  if (curto) {
+    const [r, g, b] = curto[1].split('');
+    return `${r}${r}${g}${g}${b}${b}`.toLowerCase();
+  }
+  const longo = /^#?([0-9a-f]{6})$/i.exec(limpo);
+  return longo ? longo[1].toLowerCase() : null;
+}
+
 function escurecer(hex: string, fator = 0.15): string {
-  const match = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
-  if (!match) return hex;
-  const num = parseInt(match[1], 16);
+  const normalizado = normalizarHex(hex);
+  if (!normalizado) return hex;
+  const num = parseInt(normalizado, 16);
   const canal = (shift: number) => {
     const valor = (num >> shift) & 0xff;
     return Math.max(0, Math.round(valor * (1 - fator)));
@@ -56,9 +67,13 @@ function escurecer(hex: string, fator = 0.15): string {
 // Quando a cor de destaque está no valor padrão da marca, usa o hex exato do
 // guia; se o usuário customizar `corDestaque` pelo Keystatic, deriva por
 // escurecimento (não há como saber o par "-cta" certo pra uma cor arbitrária).
+// Aceita hex de 3 ou 6 dígitos, com ou sem espaço em volta — o campo no
+// Keystatic só valida tamanho (4-9 caracteres), não o formato exato.
 const LARANJA_CTA_PADRAO = '#B85A28';
 
+const corDestaqueNormalizada = normalizarHex(aparencia.corDestaque);
+
 export const corDestaqueCta =
-  aparencia.corDestaque.toUpperCase() === '#D4703A' ? LARANJA_CTA_PADRAO : escurecer(aparencia.corDestaque, 0.18);
+  corDestaqueNormalizada === 'd4703a' ? LARANJA_CTA_PADRAO : escurecer(aparencia.corDestaque, 0.18);
 
 export const corDestaqueCtaHover = escurecer(corDestaqueCta, 0.12);

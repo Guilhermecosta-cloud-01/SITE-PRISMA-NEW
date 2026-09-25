@@ -22,7 +22,7 @@ const storage: import('@keystatic/core').Config['storage'] =
 
 // Fundo de bloco: só permite os tons já existentes na paleta da marca (nunca
 // hex livre) para o editor de blocos não conseguir quebrar o contraste do
-// texto, que já é fixo por tom (claro/branco = texto navy, escuro = texto creme).
+// texto, que já é fixo por tom (papel/areia = texto navy, navy = texto areia).
 const corFundoField = fields.select({
   label: 'Fundo',
   description:

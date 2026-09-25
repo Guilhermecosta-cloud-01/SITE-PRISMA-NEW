@@ -13,7 +13,7 @@ const representadas = (await getCollection('representadas', ({ data }) => data.a
 
 const mensagemHero = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.';
 
-const marcadores = ['bg-aco', 'bg-areia', 'bg-[var(--color-accent)]'];
+const marcadores = ['bg-aco', 'bg-areia', 'bg-aco/60'];
 ---
 
 <Layout
@@ -51,7 +51,10 @@ const marcadores = ['bg-aco', 'bg-areia', 'bg-[var(--color-accent)]'];
       </div>
 
       <div class="flex-1 md:max-w-[520px]">
-        <div class="relative overflow-hidden rounded-md border border-white/8 bg-navy p-6 md:p-9">
+        <div
+          class="relative overflow-hidden rounded-md border border-white/15 bg-navy p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] md:p-9"
+          style="background-image:linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0) 45%)"
+        >
           <div
             class="pointer-events-none absolute inset-0"
             style="background:repeating-linear-gradient(115deg,rgba(255,255,255,.035) 0px,rgba(255,255,255,.035) 2px,transparent 2px,transparent 26px)"

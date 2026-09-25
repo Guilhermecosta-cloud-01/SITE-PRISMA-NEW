@@ -1,6 +1,57 @@
 import { defineCollection, reference, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+// Espelha o formato bruto que o Keystatic grava para fields.conditional
+// (ver src/lib/blocos.ts) com uma union discriminada de verdade, em vez de um
+// z.record solto — assim um bloco malformado (CTA sem destino, cards vazio)
+// falha o build em vez de virar uma seção quebrada em produção.
+const corFundoSchema = z.enum(['papel', 'areia', 'navy']);
+
+const blocoSchema = z.discriminatedUnion('discriminant', [
+  z.object({
+    discriminant: z.literal('segmentos'),
+    value: z.object({
+      titulo: z.string(),
+      subtitulo: z.string().optional(),
+      corFundo: corFundoSchema,
+    }),
+  }),
+  z.object({
+    discriminant: z.literal('representadas'),
+    value: z.object({
+      titulo: z.string(),
+      subtitulo: z.string().optional(),
+      corFundo: corFundoSchema,
+    }),
+  }),
+  z.object({
+    discriminant: z.literal('cards'),
+    value: z.object({
+      titulo: z.string(),
+      subtitulo: z.string().optional(),
+      corFundo: corFundoSchema,
+      itens: z
+        .array(z.object({ titulo: z.string(), descricao: z.string() }))
+        .min(1, 'Bloco "Cards" precisa de pelo menos um item — remova o bloco em vez de deixar vazio.'),
+    }),
+  }),
+  z.object({
+    discriminant: z.literal('cta'),
+    value: z
+      .object({
+        titulo: z.string(),
+        texto: z.string(),
+        corFundo: corFundoSchema,
+        botaoTexto: z.string(),
+        botaoMensagemWhatsapp: z.string().optional(),
+        botaoLink: z.string().optional(),
+      })
+      .refine((v) => Boolean(v.botaoMensagemWhatsapp || v.botaoLink), {
+        message: 'Bloco "CTA" precisa de mensagem de WhatsApp ou link — preencha um dos dois.',
+      }),
+  }),
+]);
+
 const produtos = defineCollection({
   loader: glob({ pattern: '**/*.mdoc', base: './src/content/produtos' }),
   schema: ({ image }) =>
@@ -53,14 +104,7 @@ const cidades = defineCollection({
       // Blocos extras (mesmo mecanismo do singleton Aparência — ver src/lib/blocos.ts),
       // renderizados entre "Produtos em destaque" e "Como funciona". Por padrão vem
       // com um bloco de Representadas (ver script de seed em src/content/cidades/*.mdoc).
-      blocos: z
-        .array(
-          z.object({
-            discriminant: z.enum(['segmentos', 'representadas', 'cards', 'cta']),
-            value: z.record(z.string(), z.unknown()),
-          }),
-        )
-        .default([]),
+      blocos: z.array(blocoSchema).default([]),
 
       // Seção 6 — objeções / FAQ
       faq: z

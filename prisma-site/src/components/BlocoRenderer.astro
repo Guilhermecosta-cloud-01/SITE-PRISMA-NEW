@@ -31,8 +31,27 @@ const representadas =
   bloco.tipo === 'representadas'
     ? (await getCollection('representadas', ({ data }) => data.ativa)).sort((a, b) => a.data.ordem - b.data.ordem)
     : [];
+
+// Guarda defensiva: um bloco sem conteúdo de verdade (grid vazio, cards sem
+// itens, CTA sem destino) não deve virar uma seção quebrada/vazia no ar —
+// isso já aconteceu com dado de teste editado direto pelo Keystatic.
+const temConteudo = (() => {
+  switch (bloco.tipo) {
+    case 'segmentos':
+      return segmentos.length > 0;
+    case 'representadas':
+      return representadas.length > 0;
+    case 'cards':
+      return bloco.itens.length > 0;
+    case 'cta':
+      return Boolean(bloco.botaoMensagemWhatsapp || bloco.botaoLink);
+    default:
+      return true;
+  }
+})();
 ---
 
+{temConteudo && (
 <section class={`${cor.secao} px-5 py-12 md:px-14 md:py-20`}>
   <div class="mx-auto max-w-[1440px]">
     {bloco.subtitulo && (
@@ -90,3 +109,4 @@ const representadas =
     )}
   </div>
 </section>
+)}

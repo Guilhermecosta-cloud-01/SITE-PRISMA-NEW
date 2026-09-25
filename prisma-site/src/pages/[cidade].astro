@@ -89,9 +89,20 @@ const comoFunciona = [
       </div>
 
       {cidade.data.provaRapida.length > 0 && (
-        <ul class="mt-8 flex flex-col gap-2 border-t border-white/10 pt-6 md:mt-10 md:flex-row md:gap-8 md:pt-7">
+        <ul class="mt-8 flex flex-col gap-2 border-t border-white/10 pt-6 md:mt-10 md:flex-row md:gap-3 md:pt-7">
           {cidade.data.provaRapida.map((fato) => (
-            <li class="font-sans text-sm text-areia/90">{fato}</li>
+            <li class="inline-flex items-center gap-1.5 rounded-full bg-verde/12 px-3.5 py-1.5 font-sans text-sm text-verde w-fit">
+              <svg width="13" height="10" viewBox="0 0 13 10" fill="none" aria-hidden="true" class="shrink-0">
+                <path
+                  d="M1 5.2 4.5 8.5 12 1"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+              {fato}
+            </li>
           ))}
         </ul>
       )}

@@ -209,6 +209,12 @@ em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.
     confundir com `verde` acima — são tokens e usos diferentes.
   - `cinza` `#8E8E8E` — só legenda/metadado/divisor (eyebrow em caixa alta, rodapé,
     código de produto). **Nunca** texto de corpo.
+  - `marinho` `#001B34` (token estático, sem hover — não é botão) — **só fundo do
+    `Header.astro` e do `Footer.astro`** (referência visual enviada pelo usuário em
+    outubro/2026). Mais escuro que o `navy` acima; não confundir nem substituir um
+    pelo outro fora desses dois componentes (navy continua a âncora do corpo das
+    páginas — hero, CTA final). Texto sobre `marinho` é sempre `papel`/`areia` em
+    variações de opacidade (`text-areia/75`, `/50` etc.), nunca `navy`/`cinza`.
   - A cor de destaque (laranja) **não** é um token Tailwind fixo — continua vindo do
     singleton "Aparência" via CSS vars dinâmicas injetadas em `Layout.astro`:
     `--color-accent` (decorativo — ícone, borda, sublinhado de link ativo;
@@ -234,18 +240,26 @@ em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.
   cobre a acentuação do português) e declarados via `@font-face` em `global.css`. Isso é
   uma exceção deliberada à regra de "sem fonte externa": os arquivos vivem no repo, o
   site publicado não faz nenhuma requisição a serviço externo de fonte em runtime.
-- **Logo**: `src/assets/logo-header.png` é o lockup oficial (ícone + "PRISMA
-  EQUIPAMENTOS", sem a linha de tagline) recortado de `logo-completo.png` — ambos
-  derivados do arquivo oficial enviado pelo usuário em outubro/2026 (fundo transparente
-  preservado, `hasAlpha: true` confirmado via `sharp`). Desde a correção de
-  outubro/2026 (feedback anotado do usuário: "Use a logo completa - tire o texto"),
-  `Logo.astro` **não tipografa mais** "PRISMA"/"Equipamentos" ao lado do ícone — renderiza
-  só o PNG oficial via `<Image>` (prop única `height`, largura derivada do aspect ratio
-  do arquivo para nunca distorcer), com `format="png"` forçado para evitar um bug
-  observado de fundo preto atrás da transparência em alguns tamanhos pequenos de
-  renderização. `src/assets/logo-icon.png` (só o ícone hexagonal, sem o lockup) e
-  `logo-completo.png` (lockup completo + tagline) continuam no repo para uso futuro
-  fora do header/footer, mas não são mais referenciados em nenhum componente.
+- **Logo**: ⚠️ **nunca use `astro:assets`/`<Image>` para o ícone da Prisma.** Em
+  outubro/2026 a renderização em produção (Cloudflare Workers) mostrou o ícone com um
+  **fundo preto sólido e cortado** — confirmado como bug do pipeline de otimização de
+  imagem do Cloudflare (ele achata a transparência do PNG contra preto em alguns
+  tamanhos), não um problema do arquivo fonte (`hasAlpha: true` confirmado via `sharp`
+  nos dois arquivos). A correção foi parar de processar esse asset pelo Astro: o ícone
+  vive em `public/img/logo-icon.png` (fora de `src/assets/`, nunca passa pelo pipeline
+  de imagem) e `Logo.astro` o referencia com um `<img>` comum (`src="/img/logo-icon.png"`),
+  nunca com `<Image>`/`getImage()`. Qualquer asset que mostrar o mesmo sintoma (fundo
+  preto/corte em produção mas não em dev) deve receber o mesmo tratamento: mover para
+  `public/` e usar `<img>` puro.
+
+  `Logo.astro` (usado só em `Header.astro`/`Footer.astro`, ambos em fundo `marinho`
+  escuro — ver guia de cores) tipografa "PRISMA"/"Equipamentos" ao lado do ícone em
+  `font-display`/`font-sans`, em cor clara (`text-papel`/`text-areia`) — não usa o
+  lockup rasterizado com texto (`src/assets/logo-header.png`/`logo-completo.png`)
+  porque esses arquivos têm o texto em navy/cinza escuro, ilegível sobre fundo escuro.
+  Esses dois PNGs continuam no repo (não referenciados em nenhum componente hoje) só
+  pra uso futuro fora do header/footer, caso surja um contexto de fundo claro pro
+  lockup completo.
 
 ⚠️ **Manual de padronização (outubro/2026)**: o usuário enviou um "Manual de
 Desenvolvimento e Padronização do Site" completo (menu, página inicial, páginas de
@@ -290,23 +304,63 @@ locais** (via `sharp`, sem rede — círculo navy com a inicial da marca + nome 
 <slug>-logo.png`, referenciadas no campo `logo` de cada `.mdoc`. **Troque pelo arquivo
 oficial assim que o usuário enviar** — basta substituir o PNG e, se o nome do arquivo
 mudar, atualizar o campo `logo` da entrada correspondente (ou pelo próprio Keystatic).
-`CardRepresentada.astro` também foi simplificado nessa mesma correção: mostra **só a
-logo e o segmento** (removeu `nome` e `descricaoCurta` do card) — esses dois campos
-continuam no schema e aparecem na página própria de cada marca, só não no card de
-listagem/grid.
 
-A home ganhou dois blocos novos (mesmo mecanismo de blocos — ver "Blocos da home e da
-cidade" acima) pra cobrir as duas seções do manual que faltavam: `solucoes` (reaproveita
-`representadas`, mas deduplicado por `segmento` — um card por categoria/necessidade, com
-link "Ver todas as soluções →" pra `/solucoes`) e `cidades` (lista as cidades `ativa:
-true` + link "Ver área de atendimento completa →" pra `/area-de-atendimento` — é o que
-a home tinha antes da reestruturação de representadas, agora de volta como bloco em vez
-de seção fixa). A faixa de 4 ícones de confiança abaixo do hero da home
-("Marcas líderes de mercado" etc.) é fixa em `index.astro`, não um bloco — são
-posicionamentos genéricos já verdadeiros pro negócio (não specs/garantias específicas),
-copiados quase literal do manual. Página de cidade ganhou uma linha de localização no
-hero (`{nome} - {estado} · Interior de São Paulo`, dado já confirmado, sem geografia
-inventada tipo "Região Metropolitana").
+`CardRepresentada.astro` foi simplificado em duas rodadas de outubro/2026: primeiro
+removeu `nome`/`descricaoCurta` do card (só logo + segmento ficaram), depois removeu
+a caixa inteira (borda/sombra/fundo `areia`) a pedido do usuário ("tirar o quadrado em
+volta de cada representada e deixa apenas o logo e area de atuação") — hoje é só
+`<a>` + logo centralizada + legenda do segmento embaixo, sem nenhum fundo, pensado pra
+ficar lado a lado em fileira ("logo wall"), não em grid de cards. Por isso todo
+container que usa esse componente mudou de `grid grid-cols-N` pra
+`flex flex-wrap items-start gap-x-N gap-y-N` — ver `BlocoRenderer.astro` (blocos
+`representadas` e `solucoes`) e `src/pages/representadas.astro`. `nome`/
+`descricaoCurta` continuam no schema e aparecem na página própria de cada marca, só
+não mais em nenhum card de listagem.
+
+## Estrutura da home (`src/pages/index.astro`)
+
+Desde outubro/2026 a home segue uma referência visual específica do usuário (não é
+mais um page-builder genérico do topo ao rodapé) — nessa ordem:
+
+1. **Hero** — foto real full-bleed (`src/assets/hero/cozinha-profissional.webp`) com
+   overlay em gradiente navy, fixo em código (não editável por bloco).
+2. **Faixa de confiança** — 4 ícones fixos em código (não é bloco).
+3. **"Nossas representadas"** — ainda é o bloco `representadas` do Keystatic
+   (`aparencia.blocos`, filtrado por `tipo === 'representadas'`), agora em layout de
+   logo wall (ver acima). Título/subtítulo/cor de fundo continuam editáveis no painel.
+4. **"Soluções por categoria"** — **fixo em código**, não é mais o bloco `solucoes`.
+   Reaproveita a mesma coleção `representadas` (dedup por `segmento`, mesma lógica que
+   já existia), renderizada com o novo componente `CardCategoria.astro` (ícone genérico
+   por palavra-chave do segmento + `descricaoCurta` real da marca + "Ver solução →").
+5. **"Soluções para todos os segmentos"** — **fixo em código**, não é mais o bloco
+   `segmentos`. Ícones da coleção `segmentos` real (Restaurantes, Hotéis e Pousadas,
+   Resorts, Buffets e Eventos — **não** os rótulos genéricos da referência visual do
+   usuário, tipo "Hospitais"/"Indústrias Alimentícias", que não existem na coleção e
+   não foram confirmados) + painel com foto real de Campinas
+   (`src/assets/campinas/imagemFundo.jpg`, já usada no hero da cidade) e selo
+   "Campinas · SP", replicando o padrão da referência.
+6. **CTA final** — ainda é o bloco `cta` do Keystatic (filtrado igual ao passo 3),
+   mantido por decisão própria (não pedido explicitamente nessa rodada) porque toda
+   página do site termina em CTA de conversão — remover deixaria a home sem nenhuma
+   chamada após a seção de segmentos.
+
+Os blocos `solucoes`, `segmentos`, `cards` e `cidades` foram **removidos de
+`aparencia.json`** (a home não os renderiza mais) mas os *tipos* de bloco continuam
+existindo no schema/Keystatic/`BlocoRenderer.astro` — podem voltar a ser usados em
+página de cidade ou reativados na home se o usuário pedir. Página de cidade ganhou uma
+linha de localização no hero (`{nome} - {estado} · Interior de São Paulo`, dado já
+confirmado, sem geografia inventada tipo "Região Metropolitana").
+
+## Header e Footer — tema escuro (`marinho`)
+
+Desde outubro/2026, `Header.astro` e `Footer.astro` têm fundo `marinho` (`#001B34`,
+ver guia de cores) em vez de `papel`, por pedido explícito do usuário com referência
+visual. Mudanças relacionadas:
+- Todo texto/ícone sobre esses dois componentes usa `papel`/`areia` em opacidade
+  variável — nunca `navy`/`cinza` (ficam ilegíveis em fundo escuro).
+- `Header.astro` ganhou indicador de link ativo (sublinhado + cor de destaque,
+  comparando `Astro.url.pathname` com o `href` de cada item) — só existia o hover antes.
+- Botão do WhatsApp (`bg-whatsapp`) não mudou, já tinha contraste bom em qualquer fundo.
 
 ## Como rodar o Keystatic localmente
 

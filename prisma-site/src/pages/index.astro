@@ -1,9 +1,12 @@
 ---
+import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import BlocoRenderer from '../components/BlocoRenderer.astro';
 import BotaoWhatsApp from '../components/BotaoWhatsApp.astro';
+import CardCategoria from '../components/CardCategoria.astro';
 import fotoHero from '../assets/hero/cozinha-profissional.webp';
+import fotoCampinas from '../assets/campinas/imagemFundo.jpg';
 import { aparencia } from '../lib/aparencia';
 
 const mensagemHero = 'Olá! Gostaria de solicitar um orçamento de equipamentos para minha cozinha.';
@@ -14,6 +17,29 @@ const faixaDeConfianca = [
   { titulo: 'Agilidade na entrega (pós-venda)', icone: 'entrega' },
   { titulo: 'Atendimento a projetos e especificadores', icone: 'projetos' },
 ] as const;
+
+// "Soluções por categoria" — mesma coleção `representadas`, deduplicada por
+// `segmento` (1 card por necessidade, não por marca).
+const solucoes = Array.from(
+  new Map(
+    (await getCollection('representadas', ({ data }) => data.ativa))
+      .sort((a, b) => a.data.ordem - b.data.ordem)
+      .map((r) => [r.data.segmento, r]),
+  ).values(),
+);
+
+const segmentos = (await getCollection('segmentos', ({ data }) => data.ativa)).sort(
+  (a, b) => a.data.ordem - b.data.ordem,
+);
+
+const iconeSegmento = (nome: string) => {
+  const chave = nome.toLowerCase();
+  if (chave.includes('restaurante')) return 'restaurante';
+  if (chave.includes('hotel') || chave.includes('pousada')) return 'hotel';
+  if (chave.includes('resort')) return 'resort';
+  if (chave.includes('buffet') || chave.includes('evento')) return 'buffet';
+  return 'generico';
+};
 ---
 
 <Layout
@@ -116,5 +142,107 @@ const faixaDeConfianca = [
     </div>
   </section>
 
-  {aparencia.blocos.map((bloco) => <BlocoRenderer bloco={bloco} />)}
+  {aparencia.blocos.filter((bloco) => bloco.tipo === 'representadas').map((bloco) => <BlocoRenderer bloco={bloco} />)}
+
+  <!-- SOLUÇÕES POR CATEGORIA -->
+  <section class="bg-areia px-5 py-12 md:px-14 md:py-20">
+    <div class="mx-auto max-w-[1440px]">
+      <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-cinza md:text-xs md:tracking-[1.6px]">
+        Soluções por categoria
+      </p>
+      <h2 class="mt-3 max-w-[680px] font-display text-[28px] leading-[1.15] text-navy md:mt-4 md:text-[42px]">
+        Tudo o que o seu projeto precisa
+      </h2>
+      <p class="mt-3 max-w-xl font-sans text-[15px] leading-relaxed text-navy/80 md:text-base">
+        Equipamentos e soluções completas para cozinhas profissionais, food service e indústrias — cada categoria
+        atendida por uma marca representada.
+      </p>
+
+      <div class="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12 md:grid-cols-3 md:gap-6">
+        {solucoes.map((representada) => (
+          <CardCategoria
+            titulo={representada.data.segmento}
+            descricao={representada.data.descricaoCurta}
+            href={representada.data.temCatalogoOnline ? `/${representada.id}` : `/representada/${representada.id}`}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUÇÕES PARA TODOS OS SEGMENTOS -->
+  <section class="bg-papel px-5 py-12 md:px-14 md:py-20">
+    <div class="mx-auto grid max-w-[1440px] grid-cols-1 items-center gap-10 md:grid-cols-[1fr_480px] md:gap-14">
+      <div>
+        <p class="font-mono text-[11px] font-semibold uppercase tracking-[1.2px] text-cinza md:text-xs md:tracking-[1.6px]">
+          Segmentos atendidos
+        </p>
+        <h2 class="mt-3 font-display text-[28px] leading-[1.15] text-navy md:mt-4 md:text-[42px]">
+          Soluções para todos os segmentos
+        </h2>
+        <p class="mt-3 max-w-md font-sans text-[15px] leading-relaxed text-aco md:text-base">
+          Atendemos restaurantes, hotéis, resorts e operações de buffet e eventos em todo o interior de São Paulo,
+          com suporte técnico e comercial para cada necessidade.
+        </p>
+
+        <div class="mt-7 grid grid-cols-2 gap-5 sm:grid-cols-4 md:mt-10 md:flex md:flex-wrap md:gap-8">
+          {segmentos.map((segmento) => (
+            <div class="flex flex-col items-center gap-2 text-center md:items-start md:text-left">
+              <svg width="26" height="26" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-[var(--color-accent)]">
+                {iconeSegmento(segmento.data.nome) === 'restaurante' && (
+                  <>
+                    <path d="M6 2v7a2 2 0 0 0 4 0V2"></path>
+                    <line x1="8" y1="9" x2="8" y2="18"></line>
+                    <path d="M14 2c-1.2 1-1.8 2.5-1.8 4.3 0 1.6 1 2.9 1.8 3.2V18"></path>
+                  </>
+                )}
+                {iconeSegmento(segmento.data.nome) === 'hotel' && (
+                  <>
+                    <path d="M3 17V5a1 1 0 0 1 1-1h3v13"></path>
+                    <path d="M7 10h9a1 1 0 0 1 1 1v6"></path>
+                    <circle cx="9.5" cy="7.5" r="1"></circle>
+                  </>
+                )}
+                {iconeSegmento(segmento.data.nome) === 'resort' && (
+                  <>
+                    <path d="M10 2c3 2 3 6 0 8-3-2-3-6 0-8Z"></path>
+                    <path d="M10 10v8"></path>
+                    <path d="M3 18c2-2 4-2 7 0s5 2 7 0"></path>
+                  </>
+                )}
+                {iconeSegmento(segmento.data.nome) === 'buffet' && (
+                  <>
+                    <ellipse cx="10" cy="5" rx="7" ry="2"></ellipse>
+                    <path d="M3 5v8c0 1.1 3.1 2 7 2s7-.9 7-2V5"></path>
+                    <path d="M3 9c0 1.1 3.1 2 7 2s7-.9 7-2"></path>
+                  </>
+                )}
+                {iconeSegmento(segmento.data.nome) === 'generico' && (
+                  <rect x="3" y="3" width="14" height="14" rx="2"></rect>
+                )}
+              </svg>
+              <span class="font-sans text-[13px] font-semibold leading-snug text-navy md:text-[13.5px]">
+                {segmento.data.nome}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="relative h-[260px] overflow-hidden rounded-md md:h-[420px]">
+        <Image src={fotoCampinas} alt="Vista aérea de Campinas - SP" width={960} height={1080} class="h-full w-full object-cover" />
+        <div class="absolute inset-0" style="background:linear-gradient(0deg, rgba(27,53,86,0.55) 0%, rgba(27,53,86,0) 35%)"></div>
+        <span class="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded bg-navy/80 px-3 py-1.5 font-sans text-[12.5px] font-semibold text-papel">
+          <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="M10 18s6-5.5 6-10a6 6 0 1 0-12 0c0 4.5 6 10 6 10Z"></path>
+            <circle cx="10" cy="8" r="2"></circle>
+          </svg>
+          Campinas - SP
+        </span>
+      </div>
+    </div>
+  </section>
+
+  {aparencia.blocos.filter((bloco) => bloco.tipo === 'cta').map((bloco) => <BlocoRenderer bloco={bloco} />)}
 </Layout>

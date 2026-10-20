@@ -13,56 +13,6 @@
       }
     },
     {
-      "discriminant": "solucoes",
-      "value": {
-        "titulo": "Encontre a solução ideal para o seu projeto",
-        "subtitulo": "Soluções por categoria",
-        "corFundo": "areia"
-      }
-    },
-    {
-      "discriminant": "segmentos",
-      "value": {
-        "titulo": "Equipamos operações de todos os portes",
-        "subtitulo": "Segmentos atendidos",
-        "corFundo": "papel"
-      }
-    },
-    {
-      "discriminant": "cards",
-      "value": {
-        "titulo": "Suporte de quem entende de cozinha profissional",
-        "subtitulo": "Por que a Prisma",
-        "corFundo": "areia",
-        "itens": [
-          {
-            "titulo": "Um único contato para várias marcas",
-            "descricao": "Utensílios, exaustão, refrigeração, revestimentos, lavagem e cocção — tudo com um representante só."
-          },
-          {
-            "titulo": "Atendimento no interior de SP",
-            "descricao": "Visita técnica e suporte presencial em restaurantes, hotéis e resorts da região."
-          },
-          {
-            "titulo": "Orçamento pelo WhatsApp",
-            "descricao": "Consultoria direta para montar ou repor sua cozinha, sem burocracia."
-          },
-          {
-            "titulo": "Entrega e pós-venda",
-            "descricao": "Equipamento entregue e suporte de pós-venda garantido."
-          }
-        ]
-      }
-    },
-    {
-      "discriminant": "cidades",
-      "value": {
-        "titulo": "Cidades atendidas",
-        "subtitulo": "Atendimento regional",
-        "corFundo": "papel"
-      }
-    },
-    {
       "discriminant": "cta",
       "value": {
         "titulo": "Pronto para equipar sua cozinha?",

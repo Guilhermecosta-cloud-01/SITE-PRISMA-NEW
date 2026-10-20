@@ -58,6 +58,12 @@
   --color-whatsapp: #25d366;
   --color-whatsapp-hover: #21ba5a;
 
+  /* Navy escuro institucional — SÓ fundo do header e do footer (referência visual
+     enviada pelo usuário em outubro/2026). Mais escuro que o `navy` acima
+     (#1B3556), que continua sendo a âncora navy do corpo das páginas (hero,
+     CTA final) — não substitua um pelo outro fora desses dois componentes. */
+  --color-marinho: #001b34;
+
   --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'League Gothic', ui-sans-serif, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;

@@ -1,25 +1,51 @@
 ---
-import { Image } from 'astro:assets';
-import logoHeader from '../assets/logo-header.png';
-
 interface Props {
   height?: number;
 }
 
 const { height = 42 } = Astro.props;
 
-// Proporção do arquivo oficial (ícone + "PRISMA EQUIPAMENTOS", sem a linha de
-// tagline) — nunca distorça: largura sempre derivada da altura por esse aspect ratio.
-const ASPECT = logoHeader.width / logoHeader.height;
-const width = Math.round(height * ASPECT);
+// Ícone oficial (hexágono + cubo), proporção quase quadrada (564×585) — nunca
+// distorça, largura derivada da altura.
+const ASPECT = 564 / 585;
+const iconWidth = Math.round(height * ASPECT);
+
+// ⚠️ Servido direto de public/ com <img> comum, de propósito — não use
+// astro:assets/<Image> aqui. O pipeline de otimização de imagem do Cloudflare
+// Workers achatou a transparência do PNG contra um fundo preto em produção
+// (bug observado, não é problema do arquivo fonte — hasAlpha:true confirmado
+// via sharp). Um <img> normal nunca passa por esse pipeline, então nunca sofre
+// esse achatamento.
+//
+// O texto "PRISMA"/"EQUIPAMENTOS" é tipografado aqui (não vem do PNG) porque,
+// desde a correção de outubro/2026, Logo.astro só é usado dentro de Header e
+// Footer — ambos em fundo navy escuro (`marinho`) — e o lockup oficial
+// completo (logo-header.png) tem o texto em navy/cinza escuro, ilegível sobre
+// esse fundo. O ícone continua sendo o arquivo oficial, nunca redesenhado à
+// mão; só a palavra ao lado é HTML/CSS, em cor clara.
 ---
 
-<Image
-  src={logoHeader}
-  alt="Prisma Equipamentos"
-  width={width}
-  height={height}
-  format="png"
-  style={`height:${height}px;width:${width}px`}
-  class="shrink-0"
-/>
+<span class="inline-flex shrink-0 items-center gap-2.5" style={`height:${height}px`}>
+  <img
+    src="/img/logo-icon.png"
+    alt=""
+    width={iconWidth}
+    height={height}
+    style={`height:${height}px;width:${iconWidth}px`}
+    class="shrink-0"
+  />
+  <span class="flex flex-col justify-center leading-none">
+    <span
+      class="font-display tracking-wide text-papel"
+      style={`font-size:${Math.round(height * 0.46)}px`}
+    >
+      PRISMA
+    </span>
+    <span
+      class="font-sans font-semibold uppercase tracking-[1.5px] text-areia/70"
+      style={`font-size:${Math.round(height * 0.19)}px`}
+    >
+      Equipamentos
+    </span>
+  </span>
+</span>

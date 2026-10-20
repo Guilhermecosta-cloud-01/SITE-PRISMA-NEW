@@ -1,0 +1,81 @@
+---
+interface Props {
+  titulo: string;
+  descricao: string;
+  href: string;
+}
+
+const { titulo, descricao, href } = Astro.props;
+
+// Ícone genérico por palavra-chave do segmento — decorativo, não é dado de negócio.
+const chave = titulo.toLowerCase();
+const icone = chave.includes('cocç') || chave.includes('forno')
+  ? 'fogo'
+  : chave.includes('refriger')
+    ? 'floco'
+    : chave.includes('exaust')
+      ? 'ventilador'
+      : chave.includes('lavagem')
+        ? 'gota'
+        : chave.includes('revestimento')
+          ? 'camadas'
+          : 'utensilio';
+---
+
+<a
+  href={href}
+  class="group flex flex-col gap-4 rounded-md bg-navy p-6 transition-colors hover:bg-[#15335a] md:p-7"
+>
+  <svg width="28" height="28" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"
+    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="text-[var(--color-accent)]">
+    {icone === 'fogo' && (
+      <path d="M10 2c1 2.5-1 3.5-1 5.5 0 1 .8 1.5 1.5 1.5S12 8.3 12 7c1.5 1.5 2.5 3.3 2.5 5 0 2.8-2 5-4.5 5S5.5 14.8 5.5 12c0-2 1.2-3.3 2-4.3-.3 1 0 2 .8 2 1 0-.3-3 1.7-7.7Z" />
+    )}
+    {icone === 'floco' && (
+      <>
+        <line x1="10" y1="2" x2="10" y2="18"></line>
+        <line x1="3.5" y1="5.5" x2="16.5" y2="14.5"></line>
+        <line x1="16.5" y1="5.5" x2="3.5" y2="14.5"></line>
+        <line x1="10" y1="2" x2="7.5" y2="4.5"></line>
+        <line x1="10" y1="2" x2="12.5" y2="4.5"></line>
+        <line x1="10" y1="18" x2="7.5" y2="15.5"></line>
+        <line x1="10" y1="18" x2="12.5" y2="15.5"></line>
+      </>
+    )}
+    {icone === 'ventilador' && (
+      <>
+        <circle cx="10" cy="10" r="1.6"></circle>
+        <path d="M10 8.5c0-3 2-5 4-4.5s1.5 3.5-1 5"></path>
+        <path d="M11.5 10.8c2.6 1.2 3.6 3.4 2.6 5.2s-3.6.8-4.6-1.8"></path>
+        <path d="M8.5 11.2c-2.6 1.2-4.6.2-5-1.8s2-3.4 4.6-2.4"></path>
+      </>
+    )}
+    {icone === 'gota' && (
+      <path d="M10 2.5C7.5 6 5 9 5 12.3a5 5 0 0 0 10 0C15 9 12.5 6 10 2.5Z"></path>
+    )}
+    {icone === 'camadas' && (
+      <>
+        <polygon points="10,3 17,7 10,11 3,7"></polygon>
+        <polyline points="3,11 10,15 17,11"></polyline>
+        <polyline points="3,15 10,19 17,15"></polyline>
+      </>
+    )}
+    {icone === 'utensilio' && (
+      <>
+        <path d="M6 2v7a2 2 0 0 0 4 0V2"></path>
+        <line x1="8" y1="9" x2="8" y2="18"></line>
+        <path d="M14 2c-1.2 1-1.8 2.5-1.8 4.3 0 1.6 1 2.9 1.8 3.2V18"></path>
+      </>
+    )}
+  </svg>
+  <div>
+    <h3 class="font-sans text-[16px] font-bold text-areia md:text-[18px]">{titulo}</h3>
+    <p class="mt-1.5 font-sans text-[13.5px] leading-relaxed text-areia/70 md:text-sm">{descricao}</p>
+  </div>
+  <span class="mt-auto inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-[var(--color-accent)]">
+    Ver solução
+    <svg width="14" height="10" viewBox="0 0 15 11" fill="none" aria-hidden="true" class="transition-transform group-hover:translate-x-1">
+      <path d="M1 5.5h12.5M8.5 1l4.5 4.5L8.5 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </span>
+</a>

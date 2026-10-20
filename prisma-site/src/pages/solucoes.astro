@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import CardRepresentada from '../components/CardRepresentada.astro';
+import CardCategoria from '../components/CardCategoria.astro';
 
 const representadas = (await getCollection('representadas', ({ data }) => data.ativa)).sort((a, b) =>
   a.data.segmento.localeCompare(b.data.segmento),
@@ -18,8 +18,14 @@ const representadas = (await getCollection('representadas', ({ data }) => data.a
       Encontre a solução pela necessidade da sua operação — cada categoria é atendida por uma marca representada.
     </p>
 
-    <div class="mt-8 grid grid-cols-2 gap-3 md:mt-12 md:grid-cols-4 md:gap-6">
-      {representadas.map((representada) => <CardRepresentada representada={representada} />)}
+    <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-12 md:grid-cols-3 md:gap-6">
+      {representadas.map((representada) => (
+        <CardCategoria
+          titulo={representada.data.segmento}
+          descricao={representada.data.descricaoCurta}
+          href={representada.data.temCatalogoOnline ? `/${representada.id}` : `/representada/${representada.id}`}
+        />
+      ))}
     </div>
   </div>
 </Layout>

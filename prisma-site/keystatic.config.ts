@@ -340,6 +340,34 @@ export default config({
         }),
         ordem: fields.number({ label: 'Ordem', defaultValue: 99 }),
         ativa: fields.checkbox({ label: 'Ativa', defaultValue: true }),
+        categoriasProdutos: fields.array(fields.text({ label: 'Categoria' }), {
+          label: 'Principais categorias de produtos/soluções',
+          description: 'Opcional — lista simples, ex.: "Fornos combinados", "Estufas". Some da página se vazio.',
+          itemLabel: (props) => props.value || 'Categoria',
+        }),
+        imagens: fields.array(
+          fields.image({
+            label: 'Imagem',
+            directory: 'src/assets',
+            publicPath: '../../assets/',
+          }),
+          {
+            label: 'Fotos reais de produtos/aplicações',
+            description: 'Opcional — nunca banco de imagem genérico. A galeria some da página se vazia.',
+            itemLabel: () => 'Foto',
+          },
+        ),
+        diferenciais: fields.array(fields.text({ label: 'Diferencial' }), {
+          label: 'Benefícios e diferenciais',
+          description:
+            'Opcional — só o que estiver comprovado pelo material oficial da marca. Não invente specs/certificações.',
+          itemLabel: (props) => props.value || 'Diferencial',
+        }),
+        segmentosAtendidos: fields.multiRelationship({
+          label: 'Segmentos e aplicações compatíveis',
+          collection: 'segmentos',
+          description: 'Opcional — reaproveita a coleção Segmentos; só associe se for confirmado',
+        }),
         content: fields.markdoc({ label: 'Apresentação da marca' }),
       },
     }),

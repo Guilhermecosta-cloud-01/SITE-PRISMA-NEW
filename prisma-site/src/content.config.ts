@@ -149,7 +149,24 @@ const representadas = defineCollection({
       temCatalogoOnline: z.boolean().default(false),
       ordem: z.number().default(99),
       ativa: z.boolean().default(true),
-      // Corpo em Markdoc = apresentação da marca
+
+      // Seção 3 do manual de padronização — principais categorias de produtos/soluções
+      // da marca (opcional; some da página se vazio, nunca invente categoria sem fonte)
+      categoriasProdutos: z.array(z.string()).default([]),
+
+      // Seção 4 — fotografias reais de produtos/aplicações (opcional; o campo fica
+      // pronto para quando o usuário mandar material, mas a galeria não aparece vazia)
+      imagens: z.array(image()).default([]),
+
+      // Seção 5 — benefícios/diferenciais comprovados pelo material oficial da marca
+      // (opcional; nunca invente specs/certificações sem confirmação)
+      diferenciais: z.array(z.string()).default([]),
+
+      // Seção 6 — segmentos/aplicações compatíveis (referências à coleção `segmentos`
+      // já existente — não cria associação nova sem confirmação)
+      segmentosAtendidos: z.array(reference('segmentos')).default([]),
+
+      // Corpo em Markdoc = apresentação da marca (seção 2)
     }),
 });
 

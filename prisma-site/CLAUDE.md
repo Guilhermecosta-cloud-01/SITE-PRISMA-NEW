@@ -54,8 +54,15 @@ de `astro/loaders`), lendo os arquivos em `src/content/`. Seis coleções:
   `segmento` (ex.: "Exaustão Industrial"), `descricaoCurta`, `logo?`, `nomeCatalogo` (ex.:
   "Catálogo Tuboar" — usado na mensagem de WhatsApp do botão de pedir catálogo),
   `temCatalogoOnline` (boolean, default `false` — só `true` para a Tramontina hoje, ver
-  "Rotas da Tramontina vs. outras representadas" abaixo), `ordem`, `ativa`. Corpo em
-  Markdoc = apresentação da marca.
+  "Rotas da Tramontina vs. outras representadas" abaixo), `ordem`, `ativa`. Desde
+  outubro/2026, mais quatro campos opcionais para o formato de 8 seções do manual de
+  padronização (default vazio — a seção correspondente some da página se não
+  preenchido, nunca aparece quebrada): `categoriasProdutos` (lista de strings, seção 3),
+  `imagens` (lista de `image()`, seção 4 — nunca banco de imagem genérico), `diferenciais`
+  (lista de strings, seção 5 — só o que vier confirmado pelo material oficial da marca),
+  `segmentosAtendidos` (lista de **referências** a `segmentos`, seção 6 — reaproveita a
+  coleção existente, não inventa associação). Corpo em Markdoc = apresentação da marca
+  (seção 2).
 - **segmentos** (`src/content/segmentos/*.mdoc`): a antiga seção "Segmentos atendidos" da
   home, que era uma lista fixa em `index.astro` e virou coleção editável: `nome`,
   `descricao`, `imagem?`, `ordem`, `ativa`. Sem corpo Markdoc (não precisa).
@@ -239,12 +246,23 @@ atendimento"), páginas novas `/solucoes` (representadas agrupadas por `segmento
 reaproveitando o dado que já existia — não é uma coleção nova) e `/contato` (mesmas
 informações já confirmadas no rodapé, nada inventado) e `/segmentos` (lista a coleção
 `segmentos`). "Sobre" não está no menu prescrito pelo manual, mas continua linkada no
-rodapé — não foi removida. Itens do manual que **não** foram implementados ainda (fora
-do escopo desta rodada, não esquecer): reestruturar as páginas de marca individuais pro
-formato de 8 seções do manual (seção 6), metadados OG/Twitter por página de marca,
-compressão/formato moderno de imagem (WebP/AVIF) nas fotos reais que ainda faltam
-(hoje o site não tem fotografia real nenhuma — só o layout — porque isso depende de
-material que o usuário ainda não enviou).
+rodapé — não foi removida.
+
+As páginas de marca (`/representada/[representada].astro` e `/tramontina/index.astro`)
+seguem as 8 seções do manual (banner, apresentação, categorias, fotos, diferenciais,
+segmentos atendidos, CTA, outras soluções relacionadas) — seções 3 a 6 são os campos
+opcionais novos de `representadas` (ver "Modelo de conteúdo" acima) e só aparecem
+quando preenchidos; nenhuma seção vazia ou com placeholder vai ao ar. `Layout.astro`
+ganhou um prop `image?: ImageMetadata` opcional que gera `og:image`/`twitter:image`
+(via `getImage()`) quando a página passa uma imagem — hoje só as páginas de marca
+passam `logo` nesse prop, quando a marca tiver logo cadastrado.
+
+Itens do manual que **ainda não** foram implementados (não esquecer): compressão/
+formato moderno de imagem (WebP/AVIF) nas fotos reais que ainda faltam — hoje o site
+não tem fotografia real nenhuma, só o layout, porque isso depende de material que o
+usuário ainda não enviou. Quando ele mandar fotos reais de produto/aplicação por marca,
+entram em `representadas.imagens` (seção 4) e em `categoriasProdutos`/`diferenciais`
+conforme o material confirmar.
 
 ## Como rodar o Keystatic localmente
 
@@ -380,6 +398,9 @@ Produto é sempre da Tramontina (é a única representada com catálogo navegáv
 3. Deixe `temCatalogoOnline` desmarcado a menos que você também vá cadastrar produtos
    dessa marca em `src/content/produtos/` e replicar a árvore de rotas da Tramontina —
    sem isso, a página fica só com apresentação + botão de WhatsApp.
+4. `categoriasProdutos`, `imagens`, `diferenciais` e `segmentosAtendidos` são opcionais
+   (seções 3-6 do manual de padronização) — preencha só quando tiver material/dado
+   confirmado; a seção correspondente simplesmente não aparece se ficar vazio.
 
 ## Como mudar o layout sem mexer em código
 

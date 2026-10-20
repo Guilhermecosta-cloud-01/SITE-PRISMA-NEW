@@ -14,6 +14,8 @@ interface BlocoCampos {
 export type Bloco =
   | ({ tipo: 'segmentos' } & BlocoCampos)
   | ({ tipo: 'representadas' } & BlocoCampos)
+  | ({ tipo: 'solucoes' } & BlocoCampos)
+  | ({ tipo: 'cidades' } & BlocoCampos)
   | ({ tipo: 'cards' } & BlocoCampos & { itens: { titulo: string; descricao: string }[] })
   | ({ tipo: 'cta' } & BlocoCampos & { texto: string; botaoTexto: string });
 

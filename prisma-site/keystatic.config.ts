@@ -48,6 +48,8 @@ function blocosField(label: string) {
         options: [
           { label: 'Segmentos atendidos (grid)', value: 'segmentos' },
           { label: 'Representadas (grid)', value: 'representadas' },
+          { label: 'Soluções por categoria (grid)', value: 'solucoes' },
+          { label: 'Atendimento regional (cidades)', value: 'cidades' },
           { label: 'Cards de destaque', value: 'cards' },
           { label: 'Chamada para ação (CTA)', value: 'cta' },
         ],
@@ -60,6 +62,16 @@ function blocosField(label: string) {
           corFundo: corFundoField,
         }),
         representadas: fields.object({
+          titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
+          subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
+          corFundo: corFundoField,
+        }),
+        solucoes: fields.object({
+          titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
+          subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
+          corFundo: corFundoField,
+        }),
+        cidades: fields.object({
           titulo: fields.text({ label: 'Título da seção', validation: { isRequired: true } }),
           subtitulo: fields.text({ label: 'Subtítulo (eyebrow, opcional)' }),
           corFundo: corFundoField,

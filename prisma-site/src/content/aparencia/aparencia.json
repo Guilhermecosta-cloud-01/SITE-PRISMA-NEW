@@ -13,6 +13,14 @@
       }
     },
     {
+      "discriminant": "solucoes",
+      "value": {
+        "titulo": "Encontre a solução ideal para o seu projeto",
+        "subtitulo": "Soluções por categoria",
+        "corFundo": "areia"
+      }
+    },
+    {
       "discriminant": "segmentos",
       "value": {
         "titulo": "Equipamos operações de todos os portes",
@@ -44,6 +52,14 @@
             "descricao": "Equipamento entregue e suporte de pós-venda garantido."
           }
         ]
+      }
+    },
+    {
+      "discriminant": "cidades",
+      "value": {
+        "titulo": "Cidades atendidas",
+        "subtitulo": "Atendimento regional",
+        "corFundo": "papel"
       }
     },
     {

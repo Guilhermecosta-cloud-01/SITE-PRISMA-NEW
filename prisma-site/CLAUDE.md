@@ -257,12 +257,33 @@ ganhou um prop `image?: ImageMetadata` opcional que gera `og:image`/`twitter:ima
 (via `getImage()`) quando a página passa uma imagem — hoje só as páginas de marca
 passam `logo` nesse prop, quando a marca tiver logo cadastrado.
 
-Itens do manual que **ainda não** foram implementados (não esquecer): compressão/
-formato moderno de imagem (WebP/AVIF) nas fotos reais que ainda faltam — hoje o site
-não tem fotografia real nenhuma, só o layout, porque isso depende de material que o
-usuário ainda não enviou. Quando ele mandar fotos reais de produto/aplicação por marca,
-entram em `representadas.imagens` (seção 4) e em `categoriasProdutos`/`diferenciais`
-conforme o material confirmar.
+Itens do manual que **ainda não** foram implementados (não esquecer): fotografia real
+de fundo nas seções (hero, atendimento regional, CTA final) — as referências visuais
+que o usuário mandou usam fotos reais de cozinha/indústria como fundo, mas **este
+ambiente de execução não tem acesso de rede para baixar imagens de banco de imagens**
+(proxy de saída bloqueia hosts fora de uma allowlist fixa — testado com Unsplash,
+recusado pelo proxy). Sem arquivo enviado pelo usuário, essas seções continuam em cor
+chapada (`navy`/`areia`/`papel`), e não há correção de código possível para isso — só
+depende do usuário mandar os arquivos (ou de rodar numa sessão com acesso de rede
+liberado para enviar). Quando as fotos chegarem: hero da home/cidade, seção
+"Atendimento regional" e CTA final são os três pontos que o manual pede imagem de
+fundo. Compressão/formato moderno de imagem (WebP/AVIF) nas fotos reais que ainda
+faltam também fica pendente pelo mesmo motivo. Quando o usuário mandar fotos reais de
+produto/aplicação por marca, entram em `representadas.imagens` (seção 4) e em
+`categoriasProdutos`/`diferenciais` conforme o material confirmar.
+
+A home ganhou dois blocos novos (mesmo mecanismo de blocos — ver "Blocos da home e da
+cidade" acima) pra cobrir as duas seções do manual que faltavam: `solucoes` (reaproveita
+`representadas`, mas deduplicado por `segmento` — um card por categoria/necessidade, com
+link "Ver todas as soluções →" pra `/solucoes`) e `cidades` (lista as cidades `ativa:
+true` + link "Ver área de atendimento completa →" pra `/area-de-atendimento` — é o que
+a home tinha antes da reestruturação de representadas, agora de volta como bloco em vez
+de seção fixa). A faixa de 4 ícones de confiança abaixo do hero da home
+("Marcas líderes de mercado" etc.) é fixa em `index.astro`, não um bloco — são
+posicionamentos genéricos já verdadeiros pro negócio (não specs/garantias específicas),
+copiados quase literal do manual. Página de cidade ganhou uma linha de localização no
+hero (`{nome} - {estado} · Interior de São Paulo`, dado já confirmado, sem geografia
+inventada tipo "Região Metropolitana").
 
 ## Como rodar o Keystatic localmente
 
@@ -439,6 +460,11 @@ disponíveis (o discriminante fica em `bloco.tipo` depois de `paraBlocos()`):
 - `representadas` — grid da coleção `representadas` (título/subtítulo + cor de fundo).
   **Todas as 20 páginas de cidade já vêm com um bloco desse por padrão** (seed feito em
   agosto/2026, editável/removível por cidade no Keystatic).
+- `solucoes` — mesma coleção `representadas`, mas deduplicada por `segmento` (um card
+  por categoria/necessidade, não por marca) + link "Ver todas as soluções →" para
+  `/solucoes`. Cobre a seção "Soluções por categoria" do manual de padronização.
+- `cidades` — lista as cidades `ativa: true` + link "Ver área de atendimento completa →"
+  para `/area-de-atendimento`. Cobre a seção "Atendimento regional" do manual.
 - `cards` — lista de cards manuais (`itens: {titulo, descricao}[]`) — usado hoje para
   "Por que a Prisma" na home.
 - `cta` — chamada para ação: texto + botão que abre WhatsApp (`botaoMensagemWhatsapp`)

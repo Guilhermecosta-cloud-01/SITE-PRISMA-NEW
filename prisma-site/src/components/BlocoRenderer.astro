@@ -32,6 +32,28 @@ const representadas =
     ? (await getCollection('representadas', ({ data }) => data.ativa)).sort((a, b) => a.data.ordem - b.data.ordem)
     : [];
 
+// "Soluções por categoria" reaproveita a mesma coleção `representadas`, só que
+// agrupada por `segmento` (1 card por categoria/necessidade, não por marca) —
+// como cada marca hoje cobre um segmento só, isso vira 1 card por marca mesmo,
+// mas com outro enquadramento (por necessidade do cliente, não por nome de marca).
+const solucoes =
+  bloco.tipo === 'solucoes'
+    ? Array.from(
+        new Map(
+          (await getCollection('representadas', ({ data }) => data.ativa))
+            .sort((a, b) => a.data.ordem - b.data.ordem)
+            .map((r) => [r.data.segmento, r]),
+        ).values(),
+      )
+    : [];
+
+const cidadesAtivas =
+  bloco.tipo === 'cidades'
+    ? (await getCollection('cidades', ({ data }) => data.ativa)).sort((a, b) =>
+        a.data.nome.localeCompare(b.data.nome),
+      )
+    : [];
+
 // Guarda defensiva: um bloco sem conteúdo de verdade (grid vazio, cards sem
 // itens, CTA sem destino) não deve virar uma seção quebrada/vazia no ar —
 // isso já aconteceu com dado de teste editado direto pelo Keystatic.
@@ -41,6 +63,10 @@ const temConteudo = (() => {
       return segmentos.length > 0;
     case 'representadas':
       return representadas.length > 0;
+    case 'solucoes':
+      return solucoes.length > 0;
+    case 'cidades':
+      return cidadesAtivas.length > 0;
     case 'cards':
       return bloco.itens.length > 0;
     case 'cta':
@@ -73,6 +99,43 @@ const temConteudo = (() => {
       <div class="mt-6 grid grid-cols-2 gap-3 md:mt-12 md:grid-cols-4 md:gap-6">
         {representadas.map((representada) => <CardRepresentada representada={representada} />)}
       </div>
+    )}
+
+    {bloco.tipo === 'solucoes' && (
+      <>
+        <div class="mt-6 grid grid-cols-2 gap-3 md:mt-12 md:grid-cols-3 md:gap-6">
+          {solucoes.map((representada) => <CardRepresentada representada={representada} />)}
+        </div>
+        <a
+          href="/solucoes"
+          class={`mt-6 inline-flex items-center gap-1.5 font-sans text-sm font-semibold md:mt-8 ${bloco.corFundo === 'navy' ? 'text-areia' : 'text-navy'} hover:text-[var(--color-accent)] transition-colors`}
+        >
+          Ver todas as soluções →
+        </a>
+      </>
+    )}
+
+    {bloco.tipo === 'cidades' && (
+      <>
+        <ul class="mt-6 flex flex-wrap gap-3 md:mt-10">
+          {cidadesAtivas.map((cidade) => (
+            <li>
+              <a
+                href={`/${cidade.id}`}
+                class="inline-flex items-center gap-2 rounded border border-cinza/30 bg-papel px-5 py-3 font-sans text-[15px] font-semibold text-navy transition-colors hover:border-[var(--color-accent)]"
+              >
+                {cidade.data.nome} - {cidade.data.estado}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a
+          href="/area-de-atendimento"
+          class={`mt-6 inline-flex items-center gap-1.5 font-sans text-sm font-semibold md:mt-8 ${bloco.corFundo === 'navy' ? 'text-areia' : 'text-navy'} hover:text-[var(--color-accent)] transition-colors`}
+        >
+          Ver área de atendimento completa →
+        </a>
+      </>
     )}
 
     {bloco.tipo === 'cards' && (

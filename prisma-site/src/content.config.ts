@@ -25,6 +25,22 @@ const blocoSchema = z.discriminatedUnion('discriminant', [
     }),
   }),
   z.object({
+    discriminant: z.literal('solucoes'),
+    value: z.object({
+      titulo: z.string(),
+      subtitulo: z.string().optional(),
+      corFundo: corFundoSchema,
+    }),
+  }),
+  z.object({
+    discriminant: z.literal('cidades'),
+    value: z.object({
+      titulo: z.string(),
+      subtitulo: z.string().optional(),
+      corFundo: corFundoSchema,
+    }),
+  }),
+  z.object({
     discriminant: z.literal('cards'),
     value: z.object({
       titulo: z.string(),

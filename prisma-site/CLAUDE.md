@@ -192,10 +192,21 @@ em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.
   - `areia` `#E4DCCF` — fundo de seção alternada (o "respiro" entre navys).
   - `papel` `#FBFAF8` — fundo de leitura padrão (header, footer e a maioria das
     seções claras).
-  - `verde` `#5C7A62` (hover `#516B56`, token estático) — confirmação/garantia/selo
-    (ex.: "nota fiscal e garantia de fábrica") **e, desde outubro/2026, todo botão que
-    abre o WhatsApp** (pedido explícito do "Manual de padronização" do usuário — ver
-    aviso abaixo). Fora isso, nunca em botão.
+  - `verde` `#5C7A62` (hover `#516B56`, token estático) — só confirmação/garantia/selo
+    (ex.: "nota fiscal e garantia de fábrica"). **Nunca** fundo de botão (ver correção
+    de outubro/2026 abaixo — a regra anterior, "todo botão de WhatsApp em verde", foi
+    revertida e dividida em duas cores).
+  - `azul` `#0A7BCE` (hover `#096CB5`, token estático, amostrado da referência visual
+    do usuário) — cor do CTA institucional padrão (`BotaoWhatsApp` variante `azul`,
+    a default do componente). Usado mesmo quando o botão abre o WhatsApp por trás,
+    desde que não esteja explicitamente rotulado "WhatsApp" (ex. "Solicitar Orçamento"
+    no hero da home). Ícone: seta (→), nunca o ícone do WhatsApp.
+  - `whatsapp` `#25D366` (hover `#21BA5A`, token estático, verde oficial da marca
+    WhatsApp) — só para os pontos de contato **explicitamente rotulados/iconografados
+    como WhatsApp**: botão compacto do header/menu mobile ("Fale conosco"), bolha
+    flutuante (`WhatsAppFlutuante.astro`) e o botão de envio de
+    `/area-de-atendimento` ("Continuar no WhatsApp"). Ícone: logo do WhatsApp. Não
+    confundir com `verde` acima — são tokens e usos diferentes.
   - `cinza` `#8E8E8E` — só legenda/metadado/divisor (eyebrow em caixa alta, rodapé,
     código de produto). **Nunca** texto de corpo.
   - A cor de destaque (laranja) **não** é um token Tailwind fixo — continua vindo do
@@ -223,17 +234,18 @@ em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.
   cobre a acentuação do português) e declarados via `@font-face` em `global.css`. Isso é
   uma exceção deliberada à regra de "sem fonte externa": os arquivos vivem no repo, o
   site publicado não faz nenhuma requisição a serviço externo de fonte em runtime.
-- **Logo**: `src/assets/logo-icon.png` (ícone hexagonal) e `src/assets/logo-completo.png`
-  (lockup completo, ícone + "PRISMA EQUIPAMENTOS" + tagline) são recortes do arquivo
-  oficial enviado pelo usuário em outubro/2026 (fundo transparente preservado — nunca
-  redesenhe esse ícone à mão, é regra explícita do manual de padronização do usuário).
-  `Logo.astro` usa `logo-icon.png` para o ícone e tipografa "PRISMA"/"Equipamentos" ao
-  lado em `font-display`/`font-sans` (não usa `logo-completo.png`) — decisão deliberada:
-  o lockup rasterizado não escala tão nítido quanto texto real nos tamanhos pequenos do
-  header/footer. `logo-completo.png` fica disponível em `src/assets` para uso futuro
-  onde fizer sentido um PNG grande (ex. apresentação, redes sociais), mas não está
-  referenciado em nenhum componente hoje. Componente: `src/components/Logo.astro`
-  (props `iconSize`, `textSize`, `showTagline`).
+- **Logo**: `src/assets/logo-header.png` é o lockup oficial (ícone + "PRISMA
+  EQUIPAMENTOS", sem a linha de tagline) recortado de `logo-completo.png` — ambos
+  derivados do arquivo oficial enviado pelo usuário em outubro/2026 (fundo transparente
+  preservado, `hasAlpha: true` confirmado via `sharp`). Desde a correção de
+  outubro/2026 (feedback anotado do usuário: "Use a logo completa - tire o texto"),
+  `Logo.astro` **não tipografa mais** "PRISMA"/"Equipamentos" ao lado do ícone — renderiza
+  só o PNG oficial via `<Image>` (prop única `height`, largura derivada do aspect ratio
+  do arquivo para nunca distorcer), com `format="png"` forçado para evitar um bug
+  observado de fundo preto atrás da transparência em alguns tamanhos pequenos de
+  renderização. `src/assets/logo-icon.png` (só o ícone hexagonal, sem o lockup) e
+  `logo-completo.png` (lockup completo + tagline) continuam no repo para uso futuro
+  fora do header/footer, mas não são mais referenciados em nenhum componente.
 
 ⚠️ **Manual de padronização (outubro/2026)**: o usuário enviou um "Manual de
 Desenvolvimento e Padronização do Site" completo (menu, página inicial, páginas de
@@ -257,20 +269,31 @@ ganhou um prop `image?: ImageMetadata` opcional que gera `og:image`/`twitter:ima
 (via `getImage()`) quando a página passa uma imagem — hoje só as páginas de marca
 passam `logo` nesse prop, quando a marca tiver logo cadastrado.
 
-Itens do manual que **ainda não** foram implementados (não esquecer): fotografia real
-de fundo nas seções (hero, atendimento regional, CTA final) — as referências visuais
-que o usuário mandou usam fotos reais de cozinha/indústria como fundo, mas **este
-ambiente de execução não tem acesso de rede para baixar imagens de banco de imagens**
-(proxy de saída bloqueia hosts fora de uma allowlist fixa — testado com Unsplash,
-recusado pelo proxy). Sem arquivo enviado pelo usuário, essas seções continuam em cor
-chapada (`navy`/`areia`/`papel`), e não há correção de código possível para isso — só
-depende do usuário mandar os arquivos (ou de rodar numa sessão com acesso de rede
-liberado para enviar). Quando as fotos chegarem: hero da home/cidade, seção
-"Atendimento regional" e CTA final são os três pontos que o manual pede imagem de
-fundo. Compressão/formato moderno de imagem (WebP/AVIF) nas fotos reais que ainda
-faltam também fica pendente pelo mesmo motivo. Quando o usuário mandar fotos reais de
-produto/aplicação por marca, entram em `representadas.imagens` (seção 4) e em
-`categoriasProdutos`/`diferenciais` conforme o material confirmar.
+Fotografia real de fundo: **este ambiente de execução não tem acesso de rede para
+baixar imagens de banco de imagens** (proxy de saída bloqueia hosts fora de uma
+allowlist fixa — testado com Unsplash, recusado pelo proxy) — só é possível usar
+arquivo enviado pelo próprio usuário. Em outubro/2026 o usuário enviou uma foto real de
+cozinha profissional (`src/assets/hero/cozinha-profissional.webp`), usada como fundo
+full-bleed do **hero da home** (`index.astro`, com overlay em gradiente navy para
+legibilidade do texto — substituiu o antigo painel animado com a lista de
+representadas, que o usuário marcou como incorreto). **Ainda pendentes** pelo mesmo
+motivo (sem arquivo do usuário ainda): hero de cidade, seção "Atendimento regional" e
+CTA final continuam em cor chapada (`navy`/`areia`/`papel`). Quando o usuário mandar
+fotos reais de produto/aplicação por marca, entram em `representadas.imagens` (seção 4)
+e em `categoriasProdutos`/`diferenciais` conforme o material confirmar.
+
+⚠️ **Logos das representadas**: nenhuma das 7 marcas tinha o arquivo oficial de logo —
+em outubro/2026, a pedido do usuário ("coloque uma imagem que represente a logo da
+empresa que eu mudo futuramente para a correta"), foram geradas **imagens-placeholder
+locais** (via `sharp`, sem rede — círculo navy com a inicial da marca + nome +
+"LOGO PROVISÓRIO", nunca um logo real inventado) em `src/assets/representadas/
+<slug>-logo.png`, referenciadas no campo `logo` de cada `.mdoc`. **Troque pelo arquivo
+oficial assim que o usuário enviar** — basta substituir o PNG e, se o nome do arquivo
+mudar, atualizar o campo `logo` da entrada correspondente (ou pelo próprio Keystatic).
+`CardRepresentada.astro` também foi simplificado nessa mesma correção: mostra **só a
+logo e o segmento** (removeu `nome` e `descricaoCurta` do card) — esses dois campos
+continuam no schema e aparecem na página própria de cada marca, só não no card de
+listagem/grid.
 
 A home ganhou dois blocos novos (mesmo mecanismo de blocos — ver "Blocos da home e da
 cidade" acima) pra cobrir as duas seções do manual que faltavam: `solucoes` (reaproveita

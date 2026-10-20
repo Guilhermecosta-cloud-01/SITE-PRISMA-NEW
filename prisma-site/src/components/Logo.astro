@@ -1,40 +1,25 @@
 ---
 import { Image } from 'astro:assets';
-import logoIcon from '../assets/logo-icon.png';
+import logoHeader from '../assets/logo-header.png';
 
 interface Props {
-  iconSize?: number;
-  textSize?: number;
-  showTagline?: boolean;
-  taglineSize?: number;
+  height?: number;
 }
 
-const { iconSize = 46, textSize = 23, showTagline = true, taglineSize = 10.5 } = Astro.props;
+const { height = 42 } = Astro.props;
+
+// Proporção do arquivo oficial (ícone + "PRISMA EQUIPAMENTOS", sem a linha de
+// tagline) — nunca distorça: largura sempre derivada da altura por esse aspect ratio.
+const ASPECT = logoHeader.width / logoHeader.height;
+const width = Math.round(height * ASPECT);
 ---
 
-<div class="flex items-center gap-2.5">
-  <Image
-    src={logoIcon}
-    alt="Prisma Equipamentos"
-    width={iconSize}
-    height={iconSize}
-    style={`width:${iconSize}px;height:${iconSize}px`}
-    class="shrink-0"
-  />
-  <div class="flex items-center gap-1.5">
-    <span
-      class="font-display text-navy leading-none tracking-wide"
-      style={`font-size:${textSize}px`}
-    >
-      PRISMA
-    </span>
-    {showTagline && (
-      <span
-        class="font-sans font-semibold uppercase text-aco"
-        style={`font-size:${taglineSize}px; margin-top:3px; letter-spacing:1.3px`}
-      >
-        Equipamentos
-      </span>
-    )}
-  </div>
-</div>
+<Image
+  src={logoHeader}
+  alt="Prisma Equipamentos"
+  width={width}
+  height={height}
+  format="png"
+  style={`height:${height}px;width:${width}px`}
+  class="shrink-0"
+/>

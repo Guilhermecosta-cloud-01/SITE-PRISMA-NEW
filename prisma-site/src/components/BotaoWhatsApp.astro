@@ -6,7 +6,7 @@ interface Props {
   mensagem: string;
   texto?: string;
   icone?: boolean;
-  variante?: 'primario' | 'contorno';
+  variante?: 'azul' | 'whatsapp' | 'contorno';
   class?: string;
 }
 
@@ -14,14 +14,20 @@ const {
   mensagem,
   texto = 'Consultar preço',
   icone = true,
-  variante = 'primario',
+  variante = 'azul',
   class: className = '',
 } = Astro.props;
 
+// "azul" é o CTA institucional padrão (preenchimento + seta) — mesmo quando a ação
+// final é abrir o WhatsApp, o botão não é necessariamente rotulado como tal (ver
+// CLAUDE.md, "Botões: azul vs verde WhatsApp"). "whatsapp" é só pros pontos de
+// contato explicitamente rotulados como WhatsApp (ícone do WhatsApp, verde oficial).
 const estilos =
-  variante === 'primario'
-    ? 'bg-verde text-papel hover:bg-verde-hover'
-    : 'border border-navy text-navy hover:bg-navy/5';
+  variante === 'azul'
+    ? 'bg-azul text-papel hover:bg-azul-hover'
+    : variante === 'whatsapp'
+      ? 'bg-whatsapp text-papel hover:bg-whatsapp-hover'
+      : 'border border-navy text-navy hover:bg-navy/5';
 ---
 
 <a
@@ -30,6 +36,17 @@ const estilos =
   rel="noopener noreferrer"
   class={`inline-flex items-center justify-center gap-2 rounded font-sans text-[15px] font-semibold px-6 py-3.5 transition-colors ${estilos} ${className}`}
 >
-  {icone && <IconWhatsApp size={17} />}
+  {icone && variante === 'whatsapp' && <IconWhatsApp size={17} />}
   {texto}
+  {icone && variante !== 'whatsapp' && (
+    <svg width="15" height="11" viewBox="0 0 15 11" fill="none" aria-hidden="true">
+      <path
+        d="M1 5.5h12.5M8.5 1l4.5 4.5L8.5 10"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+    </svg>
+  )}
 </a>

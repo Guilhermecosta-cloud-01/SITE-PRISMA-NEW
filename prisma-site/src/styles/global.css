@@ -46,6 +46,18 @@
   --color-verde-hover: #516b56;
   --color-cinza: #8e8e8e;
 
+  /* Azul institucional — preenchimento do CTA principal ("Solicitar Orçamento" e
+     similares). Amostrado da referência visual que o usuário mandou (mockup da
+     página de Campinas), não é o mesmo tom do `aco` (mais acinzentado/sutil). */
+  --color-azul: #0a7bce;
+  --color-azul-hover: #096cb5;
+
+  /* Verde oficial do WhatsApp — só para os dois pontos de contato explicitamente
+     "WhatsApp" (botão compacto do header, bolha flutuante). Não confundir com
+     `verde` acima, que é o tom mais acinzentado reservado pra selo/confirmação. */
+  --color-whatsapp: #25d366;
+  --color-whatsapp-hover: #21ba5a;
+
   --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'League Gothic', ui-sans-serif, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;

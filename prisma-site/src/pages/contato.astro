@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+import BotaoWhatsApp from '../components/BotaoWhatsApp.astro';
+import IconWhatsApp from '../components/IconWhatsApp.astro';
+import { linkWhatsApp } from '../lib/whatsapp';
+
+const mensagem = 'Olá! Acessei o site da Prisma Equipamentos e gostaria de obter informações sobre soluções para minha operação.';
+---
+
+<Layout
+  title="Contato | Prisma Equipamentos"
+  description="Fale com a Prisma Equipamentos pelo WhatsApp e encontre a solução ideal para sua operação."
+>
+  <div class="mx-auto max-w-2xl px-5 py-10 md:px-14 md:py-16">
+    <h1 class="font-display text-[32px] leading-tight text-navy md:text-[46px]">Vamos conversar?</h1>
+    <p class="mt-3 font-sans text-[15px] leading-relaxed text-aco md:text-lg">
+      Entre em contato para conhecer as marcas representadas e identificar as soluções mais adequadas à sua
+      necessidade.
+    </p>
+
+    <div class="mt-8">
+      <BotaoWhatsApp mensagem={mensagem} texto="Falar pelo WhatsApp" />
+    </div>
+
+    <div class="mt-10 flex flex-col gap-5 border-t border-cinza/20 pt-8">
+      <a href={linkWhatsApp(mensagem)} target="_blank" rel="noopener noreferrer" class="flex items-center gap-3">
+        <IconWhatsApp size={18} class="text-verde" />
+        <div>
+          <p class="font-sans text-[15px] font-semibold text-navy">(19) 99261-6207</p>
+          <p class="font-sans text-sm text-cinza">Atendimento comercial pelo WhatsApp</p>
+        </div>
+      </a>
+      <div>
+        <p class="font-sans text-[15px] font-semibold text-navy">TODO: e-mail real de contato</p>
+        <p class="font-sans text-sm text-cinza">Envie um e-mail</p>
+      </div>
+      <div>
+        <p class="font-sans text-[15px] font-semibold text-navy">Interior de São Paulo</p>
+        <p class="font-sans text-sm text-cinza">TODO: endereço/área de atendimento detalhada, se houver</p>
+      </div>
+    </div>
+  </div>
+</Layout>

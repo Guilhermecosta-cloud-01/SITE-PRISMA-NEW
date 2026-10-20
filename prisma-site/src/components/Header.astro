@@ -6,9 +6,12 @@ import { linkWhatsApp } from '../lib/whatsapp';
 const mensagem = 'Olá! Gostaria de falar sobre equipamentos para minha cozinha.';
 
 const links = [
-  { href: '/representadas', label: 'Representadas' },
-  { href: '/area-de-atendimento', label: 'Área de atendimento' },
-  { href: '/sobre', label: 'Sobre' },
+  { href: '/', label: 'Início' },
+  { href: '/representadas', label: 'Marcas' },
+  { href: '/solucoes', label: 'Soluções' },
+  { href: '/segmentos', label: 'Segmentos' },
+  { href: '/area-de-atendimento', label: 'Atendimento regional' },
+  { href: '/contato', label: 'Contato' },
 ];
 ---
 
@@ -36,7 +39,7 @@ const links = [
         href={linkWhatsApp(mensagem)}
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 rounded bg-[var(--color-accent-cta)] px-5 py-2.5 font-sans text-sm font-semibold text-papel shadow-sm transition-colors hover:bg-[var(--color-accent-cta-hover)]"
+        class="inline-flex items-center gap-2 rounded bg-verde px-5 py-2.5 font-sans text-sm font-semibold text-papel shadow-sm transition-colors hover:bg-verde-hover"
       >
         <IconWhatsApp size={16} />
         Falar no WhatsApp
@@ -65,7 +68,7 @@ const links = [
           href={linkWhatsApp(mensagem)}
           target="_blank"
           rel="noopener noreferrer"
-          class="mt-2 inline-flex items-center justify-center gap-2 rounded bg-[var(--color-accent-cta)] px-5 py-2.5 font-sans text-sm font-semibold text-papel"
+          class="mt-2 inline-flex items-center justify-center gap-2 rounded bg-verde px-5 py-2.5 font-sans text-sm font-semibold text-papel"
         >
           <IconWhatsApp size={16} />
           Falar no WhatsApp

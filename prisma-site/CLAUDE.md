@@ -185,8 +185,10 @@ em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.
   - `areia` `#E4DCCF` — fundo de seção alternada (o "respiro" entre navys).
   - `papel` `#FBFAF8` — fundo de leitura padrão (header, footer e a maioria das
     seções claras).
-  - `verde` `#5C7A62` — só confirmação/garantia/selo (ex.: "nota fiscal e garantia
-    de fábrica"). **Nunca** em botão.
+  - `verde` `#5C7A62` (hover `#516B56`, token estático) — confirmação/garantia/selo
+    (ex.: "nota fiscal e garantia de fábrica") **e, desde outubro/2026, todo botão que
+    abre o WhatsApp** (pedido explícito do "Manual de padronização" do usuário — ver
+    aviso abaixo). Fora isso, nunca em botão.
   - `cinza` `#8E8E8E` — só legenda/metadado/divisor (eyebrow em caixa alta, rodapé,
     código de produto). **Nunca** texto de corpo.
   - A cor de destaque (laranja) **não** é um token Tailwind fixo — continua vindo do
@@ -194,17 +196,19 @@ em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.
     `--color-accent` (decorativo — ícone, borda, sublinhado de link ativo;
     **nunca** fundo de botão) e `--color-accent-cta` (preenchimento de botão —
     default `#B85A28`, a única combinação com texto branco que passa AA; branco
-    sobre o laranja decorativo `#D4703A` reprova em 3,4:1). Ver `src/lib/aparencia.ts`
-    (`corDestaqueCta`/`corDestaqueCtaHover`) — se o usuário customizar `corDestaque`
-    no Keystatic para uma cor fora do padrão, a variante de botão é derivada por
-    escurecimento, não fica idêntica ao guia.
+    sobre o laranja decorativo `#D4703A` reprova em 3,4:1). Usado em todo CTA que
+    **não** abre WhatsApp (ex.: botão de link interno no bloco `cta`). Ver
+    `src/lib/aparencia.ts` (`corDestaqueCta`/`corDestaqueCtaHover`) — se o usuário
+    customizar `corDestaque` no Keystatic para uma cor fora do padrão, a variante de
+    botão é derivada por escurecimento, não fica idêntica ao guia.
   - **Ritmo de seções**: alterne `papel`/`areia` entre as âncoras `navy` — nunca
     duas seções escuras seguidas. Ver `src/components/BlocoRenderer.astro` (mapa
     `corFundo`) e a estrutura de `[cidade].astro` (hero e CTA final são as duas
     âncoras navy da página; "Como funciona" e "Prova social" usam `areia`).
   - Antes de mudar cor de qualquer coisa, faça a auditoria do guia: no máx. 2 navy
-    por página, nunca coladas; laranja só em elemento clicável (máx. 3 por tela);
-    nenhum botão verde; texto de corpo nunca em cinza.
+    por página, nunca coladas; laranja só em elemento clicável, nunca fundo de botão
+    (máx. 3 por tela); verde só em selo/confirmação ou botão de WhatsApp; texto de
+    corpo nunca em cinza.
 - **Tipografia**: `League Gothic` (títulos grandes / wordmark, classe `font-display`),
   `Public Sans` (texto e UI, classe `font-sans`, padrão do `body`), `IBM Plex Mono`
   (rótulos "eyebrow" em caixa alta, classe `font-mono`). Os três `.woff2` estão
@@ -212,10 +216,35 @@ em `src/styles/global.css`, `src/components/Logo.astro` e `src/components/Card*.
   cobre a acentuação do português) e declarados via `@font-face` em `global.css`. Isso é
   uma exceção deliberada à regra de "sem fonte externa": os arquivos vivem no repo, o
   site publicado não faz nenhuma requisição a serviço externo de fonte em runtime.
-- **Logo**: `src/assets/logo-icon.png` é o ícone (o prisma hexagonal) recortado e com
-  fundo removido a partir do logo original enviado pelo usuário — usado sozinho, ao lado
-  do wordmark "PRISMA / Equipamentos" tipografado (não é imagem). Componente:
-  `src/components/Logo.astro` (props `iconSize`, `textSize`, `showTagline`).
+- **Logo**: `src/assets/logo-icon.png` (ícone hexagonal) e `src/assets/logo-completo.png`
+  (lockup completo, ícone + "PRISMA EQUIPAMENTOS" + tagline) são recortes do arquivo
+  oficial enviado pelo usuário em outubro/2026 (fundo transparente preservado — nunca
+  redesenhe esse ícone à mão, é regra explícita do manual de padronização do usuário).
+  `Logo.astro` usa `logo-icon.png` para o ícone e tipografa "PRISMA"/"Equipamentos" ao
+  lado em `font-display`/`font-sans` (não usa `logo-completo.png`) — decisão deliberada:
+  o lockup rasterizado não escala tão nítido quanto texto real nos tamanhos pequenos do
+  header/footer. `logo-completo.png` fica disponível em `src/assets` para uso futuro
+  onde fizer sentido um PNG grande (ex. apresentação, redes sociais), mas não está
+  referenciado em nenhum componente hoje. Componente: `src/components/Logo.astro`
+  (props `iconSize`, `textSize`, `showTagline`).
+
+⚠️ **Manual de padronização (outubro/2026)**: o usuário enviou um "Manual de
+Desenvolvimento e Padronização do Site" completo (menu, página inicial, páginas de
+marca, página de cidade, SEO, WhatsApp, responsividade, regras de conteúdo). As
+diretrizes já incorporadas ao código: botão de WhatsApp em `verde` (ver guia de cores
+acima), logo oficial (ver acima), menu principal reordenado (`Header.astro`/
+`Footer.astro`: Início/Marcas/Soluções/Segmentos/Atendimento regional/Contato — "Marcas"
+é a antiga label "Representadas", "Atendimento regional" é a antiga "Área de
+atendimento"), páginas novas `/solucoes` (representadas agrupadas por `segmento`,
+reaproveitando o dado que já existia — não é uma coleção nova) e `/contato` (mesmas
+informações já confirmadas no rodapé, nada inventado) e `/segmentos` (lista a coleção
+`segmentos`). "Sobre" não está no menu prescrito pelo manual, mas continua linkada no
+rodapé — não foi removida. Itens do manual que **não** foram implementados ainda (fora
+do escopo desta rodada, não esquecer): reestruturar as páginas de marca individuais pro
+formato de 8 seções do manual (seção 6), metadados OG/Twitter por página de marca,
+compressão/formato moderno de imagem (WebP/AVIF) nas fotos reais que ainda faltam
+(hoje o site não tem fotografia real nenhuma — só o layout — porque isso depende de
+material que o usuário ainda não enviou).
 
 ## Como rodar o Keystatic localmente
 
